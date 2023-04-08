@@ -1,18 +1,7 @@
-FROM node:18.14.0-alpine AS builder
-
-WORKDIR /usr/src/app
-
-COPY package.json package-lock.json ./
-RUN npm install --force
-
-COPY . .
-
-RUN npm run build
-
+# production environment
 FROM nginx:1.23.3-alpine
-
-COPY --from=builder /usr/src/app/dist /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/nginx.conf
-COPY security-headers.conf /etc/nginx/security-headers.conf
-
+COPY nginx.conf /etc/nginx
+COPY security-headers.conf /etc/nginx
+COPY dist/build /usr/share/nginx/html
 EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
