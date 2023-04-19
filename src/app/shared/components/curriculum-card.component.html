@@ -1,0 +1,17 @@
+<div class="flex">
+  <ng-container *ngIf="mode === 'blueprint'">
+    <div
+      class="flex rounded-2xl border-8 border-dashed border-base-300 w-[400px] h-[400px]">
+      <div class="flex m-auto">
+        <button class="btn bg-neutral rounded-xl" (click)="onClick()">
+          CREATE
+        </button>
+      </div>
+    </div>
+  </ng-container>
+  <ng-container *ngIf="mode === 'card'">
+    <div class="flex rounded-2xl bg-base-100 w-[400px] h-[400px] shadow-lg">
+      <ng-content></ng-content>
+    </div>
+  </ng-container>
+</div>

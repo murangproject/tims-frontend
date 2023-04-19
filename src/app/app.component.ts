@@ -1,18 +1,9 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
-import { OnInit, inject } from '@angular/core';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss'],
 })
-export class AppComponent implements OnInit {
+export class AppComponent {
   title = 'frontend';
-
-  router = inject(Router);
-
-  ngOnInit() {
-    this.router.navigate(['login']);
-  }
 }
