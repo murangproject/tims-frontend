@@ -6,7 +6,7 @@ import {
   UntypedFormBuilder,
   Validators,
 } from '@angular/forms';
-import { UserModel, UserService } from '../shared/services/users.service';
+import { UserResponse, UserService } from '../shared/services/users.service';
 import { Observable, catchError, map, of } from 'rxjs';
 
 @Component({
@@ -20,8 +20,8 @@ export class UserManagementComponent implements OnInit {
   formBuilder = inject(UntypedFormBuilder);
   userService = inject(UserService);
 
-  $activeUsers: Observable<UserModel[]> = this.userService.activeUsers$;
-  $invitedUsers: Observable<UserModel[]> = this.userService.invitedUsers$;
+  activeUsers$: Observable<UserResponse[]> = this.userService.activeUsers$;
+  invitedUsers$: Observable<UserResponse[]> = this.userService.invitedUsers$;
 
   form: any = {
     email: '',
@@ -45,8 +45,8 @@ export class UserManagementComponent implements OnInit {
       role_type: ['', Validators.required],
     });
 
-    this.userService.getActiveUsers().subscribe();
-    this.userService.getInvitedUsers().subscribe();
+    this.userService.getActive().subscribe();
+    this.userService.getInvited().subscribe();
   }
 
   select(id: number) {
@@ -58,10 +58,10 @@ export class UserManagementComponent implements OnInit {
   }
 
   delete() {
-    this.userService.deleteUser(this.selectedId).subscribe(
+    this.userService.delete(this.selectedId).subscribe(
       () => {
-        this.userService.getActiveUsers().subscribe();
-        this.userService.getInvitedUsers().subscribe();
+        this.userService.getActive().subscribe();
+        this.userService.getInvited().subscribe();
         this.delete_open = false;
         this.toastUtil('User deleted successfully', true);
       },
@@ -75,11 +75,7 @@ export class UserManagementComponent implements OnInit {
   onSubmit() {
     if (this.form.valid) {
       this.userService
-        .inviteUser(
-          this.form.value.email,
-          this.form.value.role_name,
-          this.form.value.role_type
-        )
+        .create(this.form.value)
         .pipe(
           map(res => {
             this.toastUtil('User invited successfully', true);
@@ -91,8 +87,8 @@ export class UserManagementComponent implements OnInit {
           })
         )
         .subscribe(() => {
-          this.userService.getActiveUsers().subscribe();
-          this.userService.getInvitedUsers().subscribe();
+          this.userService.getActive().subscribe();
+          this.userService.getInvited().subscribe();
           this.form.reset();
           this.invite_open = false;
         });

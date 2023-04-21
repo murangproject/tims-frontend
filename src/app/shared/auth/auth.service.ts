@@ -2,7 +2,12 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { catchError, map, share, shareReplay, tap } from 'rxjs/operators';
-import { initApi, loginApi, logoutApi, validateTokenApi } from '../utils/api';
+import {
+  initAccountEndpoint,
+  loginEndpoint,
+  logoutEndpoint,
+  tokenValidationEndpoint,
+} from '../utils/api';
 
 @Injectable({
   providedIn: 'root',
@@ -19,7 +24,10 @@ export class AuthService {
     const loginPayload = { email, password };
 
     return this.http
-      .post<{ token: string; initialize: boolean }>(loginApi, loginPayload)
+      .post<{ token: string; initialize: boolean }>(
+        `${loginEndpoint}`,
+        loginPayload
+      )
       .pipe(
         tap(response => {
           localStorage.setItem(
@@ -41,14 +49,14 @@ export class AuthService {
     localStorage.removeItem('initialize');
     localStorage.removeItem('authToken');
 
-    this.http.post(logoutApi, {}, { headers }).subscribe(() => {
+    this.http.post(`${logoutEndpoint}`, {}, { headers }).subscribe(() => {
       localStorage.removeItem('initialize');
       localStorage.removeItem('authToken');
       this.isAuthenticated.next(false);
     });
   }
 
-  init(
+  initializeAccount(
     firstName: string,
     middleName: string,
     lastName: string,
@@ -70,9 +78,13 @@ export class AuthService {
     };
 
     return this.http
-      .post<{ message: string; token: string }>(initApi, initPayload, {
-        headers,
-      })
+      .post<{ message: string; token: string }>(
+        `${initAccountEndpoint}`,
+        initPayload,
+        {
+          headers,
+        }
+      )
       .pipe(
         tap((res: { message: string; token: string }) => {
           localStorage.removeItem('initialize');
@@ -89,7 +101,7 @@ export class AuthService {
     };
 
     return this.http
-      .get<{ message: string }>(validateTokenApi, { headers })
+      .get<{ message: string }>(`${tokenValidationEndpoint}`, { headers })
       .pipe(
         tap((res: { message: string }) => {
           this.isAuthenticated.next(true);
@@ -106,7 +118,7 @@ export class AuthService {
       );
   }
 
-  checkInitialization() {
+  checkInitialization(): boolean {
     return JSON.parse(localStorage.getItem('initialize') ?? 'false') ?? false;
   }
 }

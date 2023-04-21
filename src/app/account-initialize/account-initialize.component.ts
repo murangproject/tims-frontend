@@ -59,7 +59,7 @@ export class AccountInitializeComponent implements OnInit {
     }
 
     this.auth
-      .init(
+      .initializeAccount(
         data.firstName,
         data.middleName,
         data.lastName,

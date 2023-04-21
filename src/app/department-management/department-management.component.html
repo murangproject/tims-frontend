@@ -1,1 +1,163 @@
-<p>department-management works!</p>
+<div class="flex flex-col">
+  <div class="ml-auto flex">
+    <label (click)="createOpen = !createOpen" class="btn btn-wide m-4"
+      >CREATE A DEPARTMENT</label
+    >
+  </div>
+  <div class="flex overflow-x-auto w-full h-full p-5">
+    <table class="table table-compact w-full text-lg">
+      <thead>
+        <tr class="text-center">
+          <th>Code</th>
+          <th>Department</th>
+          <th>Description</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="text-center" *ngFor="let department of departments$ | async">
+          <td class="text-xl">{{ department.code }}</td>
+          <td class="text-xl">{{ department.name }}</td>
+          <td class="text-xl">{{ department.description }}</td>
+          <td class="space-x-4 justify-center items-center text-center">
+            <button
+              class="btn btn-primary bg-primary text-primary-content"
+              (click)="
+                setUpdateId(
+                  department.id,
+                  department.code,
+                  department.name,
+                  department.description
+                );
+                updateOpen = !updateOpen
+              ">
+              edit
+            </button>
+            <button
+              class="btn btn-accent bg-accent text-accent-content"
+              (click)="setDeleteId(department.id); deleteOpen = !deleteOpen">
+              delete
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- CREATE MODAL -->
+<label
+  for="my-modal-4"
+  class="modal modal-bottom sm:modal-middle cursor-pointer"
+  [ngClass]="{ 'modal-open': createOpen }">
+  <label class="modal-box relative" for="">
+    <label
+      for="my-modal-4"
+      (click)="createOpen = !createOpen"
+      class="btn btn-sm btn-circle absolute right-2 top-2"
+      >✕</label
+    >
+    <div class="flex">
+      <form
+        [formGroup]="form"
+        class="flex h-full w-full items-center justify-center">
+        <div
+          class="flex flex-col rrounded-lg p-20 items-center justify-center gap-8 bg-base-100">
+          <h1 class="text-4xl font-bold mb-6">Create New Department</h1>
+          <input
+            type="text"
+            formControlName="code"
+            placeholder="Code"
+            class="input input-bordered input-neutral w-full max-w-xs" />
+          <input
+            type="text"
+            formControlName="name"
+            placeholder="Name"
+            class="input input-bordered input-neutral w-full max-w-xs" />
+          <input
+            type="text"
+            formControlName="description"
+            placeholder="Description"
+            class="input input-bordered input-neutral w-full max-w-xs" />
+          <button
+            class="btn w-full max-w-xs"
+            type="submit"
+            (click)="onSubmit()">
+            CREATE
+          </button>
+        </div>
+      </form>
+    </div>
+  </label>
+</label>
+
+<!-- UPDATE MODAL -->
+<label
+  for="my-modal-4"
+  class="modal modal-bottom sm:modal-middle cursor-pointer"
+  [ngClass]="{ 'modal-open': updateOpen }">
+  <label class="modal-box relative" for="">
+    <label
+      for="my-modal-4"
+      (click)="updateOpen = !updateOpen"
+      class="btn btn-sm btn-circle absolute right-2 top-2"
+      >✕</label
+    >
+    <div class="flex">
+      <form
+        [formGroup]="form"
+        class="flex h-full w-full items-center justify-center">
+        <div
+          class="flex flex-col rrounded-lg p-20 items-center justify-center gap-8 bg-base-100">
+          <h1 class="text-4xl font-bold mb-6">Update Department Record</h1>
+          <input
+            type="text"
+            formControlName="code"
+            placeholder="Code"
+            class="input input-bordered input-neutral w-full max-w-xs" />
+          <input
+            type="text"
+            formControlName="name"
+            placeholder="Name"
+            class="input input-bordered input-neutral w-full max-w-xs" />
+          <input
+            type="text"
+            formControlName="description"
+            placeholder="Description"
+            class="input input-bordered input-neutral w-full max-w-xs" />
+          <button class="btn w-full max-w-xs" type="submit" (click)="update()">
+            UPDATE
+          </button>
+        </div>
+      </form>
+    </div>
+  </label>
+</label>
+
+<!-- DELETE MODAL -->
+<input type="checkbox" id="delete-modal" class="modal-toggle" />
+<div class="modal cursor-pointer" [ngClass]="{ 'modal-open': deleteOpen }">
+  <div class="modal-box" for="">
+    <h3 class="font-bold text-lg">Delete Department</h3>
+    <p class="py-4">Are you sure you want to delete this record?</p>
+    <div class="modal-action">
+      <label class="btn" (click)="delete()">CONFIRM</label>
+      <label class="btn btn-outline" (click)="deleteOpen = !deleteOpen"
+        >CANCEL</label
+      >
+    </div>
+  </div>
+</div>
+
+<!--  TOAST -->
+<div class="toast toast-end">
+  <ng-container *ngIf="toastOpen">
+    <div
+      class="alert alert-success"
+      [ngClass]="{ 'alert-success': success, 'alert-error': !success }">
+      <div>
+        <span>{{ message }}</span>
+      </div>
+    </div>
+  </ng-container>
+</div>

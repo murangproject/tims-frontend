@@ -1,14 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import {
-  activeUsersApi,
-  createUserApi,
-  deleteUserApi,
-  invitedUsersApi,
-} from '../utils/api';
 import { BehaviorSubject, map, shareReplay, tap } from 'rxjs';
+import { userEndpoint } from '../utils/api';
 
-export interface UserModel {
+export interface UserResponse {
   id?: number;
   first_name?: string;
   middle_name?: string;
@@ -20,42 +15,58 @@ export interface UserModel {
   updated_at?: string;
 }
 
+export interface CreateUserDto {
+  email: string;
+  role_name: string;
+  role_type: string;
+}
+
+export interface UpdateUserDto {
+  first_name?: string;
+  middle_name?: string;
+  last_name?: string;
+  email?: string;
+  role_name?: string;
+  role_type?: string;
+  deleted?: boolean;
+}
+
 @Injectable({
   providedIn: 'root',
 })
 export class UserService {
-  activeUsers$: BehaviorSubject<UserModel[]> = new BehaviorSubject<UserModel[]>(
-    [{}]
-  );
-  invitedUsers$: BehaviorSubject<UserModel[]> = new BehaviorSubject<
-    UserModel[]
+  activeUsers$: BehaviorSubject<UserResponse[]> = new BehaviorSubject<
+    UserResponse[]
   >([{}]);
+  invitedUsers$: BehaviorSubject<UserResponse[]> = new BehaviorSubject<
+    UserResponse[]
+  >([{}]);
+
+  endpoint = userEndpoint;
 
   constructor(private http: HttpClient) {}
 
-  inviteUser(email: string, role_name: string, role_type: string) {
+  create(createuserDto: CreateUserDto) {
     const headers = {
       Authorization: 'Bearer ' + localStorage.getItem('authToken'),
     };
 
-    const payload = {
-      email,
-      role_name,
-      role_type,
-    };
-
-    return this.http.post<{ message: string }>(createUserApi, payload, {
-      headers,
-    });
+    return this.http.post<{ message: string }>(
+      `${this.endpoint}`,
+      createuserDto,
+      {
+        headers,
+      }
+    );
   }
 
-  getActiveUsers() {
+  getActive() {
     const headers = {
       Authorization: 'Bearer ' + localStorage.getItem('authToken'),
     };
 
     return this.http
-      .get<{ users: UserModel[] }>(activeUsersApi, { headers })
+      .get<{ users: UserResponse[] }>(`${this.endpoint}/active`, { headers })
       .pipe(
         tap(res => {
           console.log(res);
@@ -65,13 +76,13 @@ export class UserService {
       );
   }
 
-  getInvitedUsers() {
+  getInvited() {
     const headers = {
       Authorization: 'Bearer ' + localStorage.getItem('authToken'),
     };
 
     return this.http
-      .get<{ users: UserModel[] }>(invitedUsersApi, { headers })
+      .get<{ users: UserResponse[] }>(`${this.endpoint}/invited`, { headers })
       .pipe(
         map(res => {
           return { ...res };
@@ -84,13 +95,32 @@ export class UserService {
       );
   }
 
-  deleteUser(id: number) {
+  delete(id: number) {
     const headers = {
       Authorization: 'Bearer ' + localStorage.getItem('authToken'),
     };
 
     return this.http
-      .delete<{ message: string }>(`${deleteUserApi}/${id}`, { headers })
+      .delete<{ message: string }>(`${this.endpoint}/${id}`, {
+        headers,
+      })
+      .pipe(
+        tap(res => {
+          console.log(res);
+        }),
+        shareReplay({ bufferSize: 1, refCount: true })
+      );
+  }
+
+  update(id: number, updateUserDto: UpdateUserDto) {
+    const headers = {
+      Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+    };
+
+    return this.http
+      .put<{ message: string }>(`${this.endpoint}/${id}`, updateUserDto, {
+        headers,
+      })
       .pipe(
         tap(res => {
           console.log(res);
