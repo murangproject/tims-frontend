@@ -6,8 +6,9 @@ import {
   UntypedFormBuilder,
   Validators,
 } from '@angular/forms';
-import { UserResponse, UserService } from '../shared/services/users.service';
+import { UserService } from './data-access/users.service';
 import { Observable, catchError, map, of } from 'rxjs';
+import { User } from './data-access/users.model';
 
 @Component({
   selector: 'app-user-management',
@@ -20,8 +21,8 @@ export class UserManagementComponent implements OnInit {
   formBuilder = inject(UntypedFormBuilder);
   userService = inject(UserService);
 
-  activeUsers$: Observable<UserResponse[]> = this.userService.activeUsers$;
-  invitedUsers$: Observable<UserResponse[]> = this.userService.invitedUsers$;
+  activeUsers$: Observable<User[]> = this.userService.activeUsers$;
+  invitedUsers$: Observable<User[]> = this.userService.invitedUsers$;
 
   form: any = {
     email: '',

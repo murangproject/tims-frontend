@@ -2,15 +2,7 @@
 
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import {
-  BehaviorSubject,
-  Observable,
-  of,
-  share,
-  shareReplay,
-  switchMap,
-  tap,
-} from 'rxjs';
+import { BehaviorSubject, Observable, shareReplay, tap } from 'rxjs';
 import {
   Department,
   CreateDepartmentDto,

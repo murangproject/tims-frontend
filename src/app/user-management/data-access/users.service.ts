@@ -1,46 +1,22 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, map, shareReplay, tap } from 'rxjs';
-import { userEndpoint } from '../utils/api';
-
-export interface UserResponse {
-  id?: number;
-  first_name?: string;
-  middle_name?: string;
-  last_name?: string;
-  email?: string;
-  role_name?: string;
-  role_type?: string;
-  created_at?: string;
-  updated_at?: string;
-}
-
-export interface CreateUserDto {
-  email: string;
-  role_name: string;
-  role_type: string;
-}
-
-export interface UpdateUserDto {
-  first_name?: string;
-  middle_name?: string;
-  last_name?: string;
-  email?: string;
-  role_name?: string;
-  role_type?: string;
-  deleted?: boolean;
-}
+import { userEndpoint } from '../../shared/utils/api';
+import { User, CreateUserDto, UpdateUserDto } from './users.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UserService {
-  activeUsers$: BehaviorSubject<UserResponse[]> = new BehaviorSubject<
-    UserResponse[]
-  >([{}]);
-  invitedUsers$: BehaviorSubject<UserResponse[]> = new BehaviorSubject<
-    UserResponse[]
-  >([{}]);
+  activeUsers: BehaviorSubject<User[]> = new BehaviorSubject<User[]>([{}]);
+  invitedUsers: BehaviorSubject<User[]> = new BehaviorSubject<User[]>([{}]);
+
+  activeUsers$ = this.activeUsers
+    .asObservable()
+    .pipe(shareReplay({ bufferSize: 1, refCount: true }));
+  invitedUsers$ = this.activeUsers
+    .asObservable()
+    .pipe(shareReplay({ bufferSize: 1, refCount: true }));
 
   endpoint = userEndpoint;
 
@@ -66,11 +42,10 @@ export class UserService {
     };
 
     return this.http
-      .get<{ users: UserResponse[] }>(`${this.endpoint}/active`, { headers })
+      .get<{ users: User[] }>(`${this.endpoint}/active`, { headers })
       .pipe(
         tap(res => {
-          console.log(res);
-          this.activeUsers$.next(res.users);
+          this.activeUsers.next(res.users);
         }),
         shareReplay({ bufferSize: 1, refCount: true })
       );
@@ -82,14 +57,13 @@ export class UserService {
     };
 
     return this.http
-      .get<{ users: UserResponse[] }>(`${this.endpoint}/invited`, { headers })
+      .get<{ users: User[] }>(`${this.endpoint}/invited`, { headers })
       .pipe(
         map(res => {
           return { ...res };
         }),
         tap(res => {
-          console.log(res);
-          this.invitedUsers$.next(res.users);
+          this.invitedUsers.next(res.users);
         }),
         shareReplay({ bufferSize: 1, refCount: true })
       );
