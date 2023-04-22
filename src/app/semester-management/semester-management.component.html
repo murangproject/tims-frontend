@@ -1,4 +1,4 @@
-<div class="flex flex-col">
+<div class="flex flex-col max-w-[800px]">
   <div class="flex items-center">
     <div class="ml-5 flex tabs">
       <a
@@ -15,16 +15,26 @@
       >
     </div>
     <!-- The button to open modal -->
-    <label
-      for="my-modal-3"
-      class="ml-auto btn btn-wide m-4"
-      (click)="openCreateAcademicYearModal()"
-      >CREATE ACADEMIC YEAR</label
-    >
+    <ng-container *ngIf="tab === 'year'">
+      <label
+        for="my-modal-3"
+        class="ml-auto btn btn-wide m-4"
+        (click)="openCreateAcademicYearModal()"
+        >CREATE ACADEMIC YEAR</label
+      >
+    </ng-container>
+    <ng-container *ngIf="tab === 'term'">
+      <label
+        for="my-modal-3"
+        class="ml-auto btn btn-wide m-4"
+        (click)="openCreateTermModal()"
+        >CREATE TERM</label
+      >
+    </ng-container>
   </div>
   <div class="flex overflow-x-auto w-full h-full p-5">
     <ng-container *ngIf="tab === 'year'">
-      <table class="table table-compact w-full text-lg">
+      <table class="table table-compact w-[800px] text-lg">
         <thead>
           <tr class="text-center">
             <th>Start Year</th>
@@ -39,7 +49,9 @@
             <td>
               <button
                 class="btn btn-accent bg-accent text-accent-content"
-                (click)="select(ay.id ?? -1); openDeleteAcademicYearModal()">
+                (click)="
+                  selectAcademicYear(ay.id ?? -1); openDeleteAcademicYearModal()
+                ">
                 delete
               </button>
             </td>
@@ -49,7 +61,7 @@
     </ng-container>
 
     <ng-container *ngIf="tab === 'term'">
-      <table class="table table-compact w-full text-lg">
+      <table class="table table-compact w-[800px] text-lg">
         <thead>
           <tr class="text-center">
             <th>Term</th>
@@ -57,12 +69,12 @@
           </tr>
         </thead>
         <tbody class="text-center">
-          <tr *ngFor="let ay of academicYears$ | async">
-            <td>{{ ay.start_year }}</td>
+          <tr *ngFor="let term of terms$ | async">
+            <td>{{ term.name }}</td>
             <td>
               <button
                 class="btn btn-accent bg-accent text-accent-content"
-                (click)="select(ay.id ?? -1); openDeleteAcademicYearModal()">
+                (click)="selectTerm(term.id ?? -1); openDeleteTermModal()">
                 delete
               </button>
             </td>
@@ -73,6 +85,7 @@
   </div>
 </div>
 
+<!-- CREATE ACADEMIC YEAR MODAL -->
 <div
   for="my-modal-3"
   class="modal"
@@ -87,10 +100,10 @@
     <div class="flex">
       <form
         class="flex h-full w-full items-center justify-center"
-        [formGroup]="form">
+        [formGroup]="academicYearForm">
         <div
           class="flex flex-col rrounded-lg p-20 items-center justify-center gap-8 bg-base-100">
-          <h1 class="text-4xl font-bold mb-6">Create New Department</h1>
+          <h1 class="text-4xl font-bold mb-6">Create New Academic Year</h1>
           <input
             type="number"
             min="1960"
@@ -119,17 +132,69 @@
   </div>
 </div>
 
-<!-- DELETE MODAL -->
+<!-- DELETE ACADEMIC YEAR MODAL -->
 <input type="checkbox" id="delete-modal" class="modal-toggle" />
 <div
   class="modal cursor-pointer"
   [ngClass]="{ 'modal-open': deleteAcademicYearModalState }">
   <div class="modal-box" for="">
-    <h3 class="font-bold text-lg">Delete Department</h3>
+    <h3 class="font-bold text-lg">Delete Academic Year</h3>
     <p class="py-4">Are you sure you want to delete this record?</p>
     <div class="modal-action">
       <label class="btn" (click)="onSubmitDeleteAcademicYear()">CONFIRM</label>
       <label class="btn btn-outline" (click)="closeDeleteAcademicYearModal()"
+        >CANCEL</label
+      >
+    </div>
+  </div>
+</div>
+
+<!-- CREATE TERM MODAL -->
+<div
+  for="my-modal-3"
+  class="modal"
+  [ngClass]="{ 'modal-open': createTermModalState }">
+  <div class="modal-box relative">
+    <label
+      for="my-modal-3"
+      class="btn btn-sm btn-circle absolute right-2 top-2"
+      (click)="closeCreateTermModal()"
+      >✕</label
+    >
+    <div class="flex">
+      <form
+        class="flex h-full w-full items-center justify-center"
+        [formGroup]="termForm">
+        <div
+          class="flex flex-col rrounded-lg p-20 items-center justify-center gap-8 bg-base-100">
+          <h1 class="text-4xl font-bold mb-6">Create New Term</h1>
+          <input
+            formControlName="name"
+            placeholder="Term"
+            class="input input-bordered input-neutral w-full max-w-xs disabled" />
+          <button
+            class="btn w-full max-w-xs"
+            type="submit"
+            (click)="onSubmitCreateTerm()">
+            CREATE
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- DELETE TERM MODAL -->
+<input type="checkbox" id="delete-modal" class="modal-toggle" />
+<div
+  class="modal cursor-pointer"
+  [ngClass]="{ 'modal-open': deleteTermModalState }">
+  <div class="modal-box" for="">
+    <h3 class="font-bold text-lg">Delete Term</h3>
+    <p class="py-4">Are you sure you want to delete this record?</p>
+    <div class="modal-action">
+      <label class="btn" (click)="onSubmitDeleteTerm()">CONFIRM</label>
+      <label class="btn btn-outline" (click)="closeDeleteTermModal()"
         >CANCEL</label
       >
     </div>

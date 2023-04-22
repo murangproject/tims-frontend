@@ -7,6 +7,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { AcademicYearService } from './data-access/academic-year.service';
+import { TermService } from './data-access/term.service';
 
 @Component({
   selector: 'app-semester-management',
@@ -16,10 +17,15 @@ import { AcademicYearService } from './data-access/academic-year.service';
 })
 export class SemesterManagementComponent implements OnInit {
   academicYears$ = this.academicYearService.getAcademicYears();
+  terms$ = this.termService.getTerms();
 
-  form: any = {
+  academicYearForm: any = {
     start_year: '',
     end_year: '',
+  };
+
+  termForm: any = {
+    name: '',
   };
 
   tab: 'year' | 'term' = 'year';
@@ -27,18 +33,23 @@ export class SemesterManagementComponent implements OnInit {
   createAcademicYearModalState: boolean = false;
   deleteAcademicYearModalState: boolean = false;
 
-  selectedId: number = -1;
+  createTermModalState: boolean = false;
+  deleteTermModalState: boolean = false;
+
+  selectedAcademicYearId: number = -1;
+  selectedTermId: number = -1;
   toastMessage: string = '';
   toastColor: boolean = false;
   toastModalState: boolean = false;
 
   constructor(
     private academicYearService: AcademicYearService,
+    private termService: TermService,
     private formBuilder: UntypedFormBuilder
   ) {}
 
   ngOnInit(): void {
-    this.form = this.formBuilder.group({
+    this.academicYearForm = this.formBuilder.group({
       start_year: [
         '',
         [Validators.required, Validators.min(1960), Validators.max(2099)],
@@ -49,22 +60,31 @@ export class SemesterManagementComponent implements OnInit {
       ],
     });
 
+    this.termForm = this.formBuilder.group({
+      name: ['', [Validators.required]],
+    });
+
     this.academicYearService.init();
+    this.termService.init();
   }
 
-  select(id: number) {
-    this.selectedId = id;
+  selectAcademicYear(id: number) {
+    this.selectedAcademicYearId = id;
+  }
+
+  selectTerm(id: number) {
+    this.selectedTermId = id;
   }
 
   openCreateAcademicYearModal() {
     this.createAcademicYearModalState = true;
-    this.form.reset();
+    this.academicYearForm.reset();
   }
 
   closeCreateAcademicYearModal() {
     this.createAcademicYearModalState = false;
-    this.form.reset();
-    this.selectedId = -1;
+    this.academicYearForm.reset();
+    this.selectedAcademicYearId = -1;
   }
 
   openDeleteAcademicYearModal() {
@@ -73,12 +93,12 @@ export class SemesterManagementComponent implements OnInit {
 
   closeDeleteAcademicYearModal() {
     this.deleteAcademicYearModalState = false;
-    this.form.reset();
-    this.selectedId = -1;
+    this.academicYearForm.reset();
+    this.selectedAcademicYearId = -1;
   }
 
   onSubmitDeleteAcademicYear() {
-    this.academicYearService.delete(this.selectedId).subscribe({
+    this.academicYearService.delete(this.selectedAcademicYearId).subscribe({
       next: () => {
         this.toastUtil('Delete academic year successfully', true);
         this.academicYearService.init();
@@ -93,11 +113,11 @@ export class SemesterManagementComponent implements OnInit {
   }
 
   onSubmitCreateAcademicYear() {
-    if (this.form.invalid) {
+    if (this.academicYearForm.invalid) {
       return;
     }
 
-    this.academicYearService.create(this.form.value).subscribe({
+    this.academicYearService.create(this.academicYearForm.value).subscribe({
       next: () => {
         this.toastUtil('Create academic year successfully', true);
         this.academicYearService.init();
@@ -107,6 +127,61 @@ export class SemesterManagementComponent implements OnInit {
         this.toastUtil('Create academic year failed', false);
         this.academicYearService.init();
         this.closeCreateAcademicYearModal();
+      },
+    });
+  }
+
+  openCreateTermModal() {
+    this.createTermModalState = true;
+    this.termForm.reset();
+  }
+
+  closeCreateTermModal() {
+    this.createTermModalState = false;
+    this.termForm.reset();
+    this.selectedTermId = -1;
+  }
+
+  openDeleteTermModal() {
+    this.deleteTermModalState = true;
+  }
+
+  closeDeleteTermModal() {
+    this.deleteTermModalState = false;
+    this.termForm.reset();
+    this.selectedTermId = -1;
+  }
+
+  onSubmitCreateTerm() {
+    if (this.termForm.invalid) {
+      return;
+    }
+
+    this.termService.create(this.termForm.value).subscribe({
+      next: () => {
+        this.toastUtil('Create term successfully', true);
+        this.termService.init();
+        this.closeCreateTermModal();
+      },
+      error: err => {
+        this.toastUtil('Create term failed', false);
+        this.termService.init();
+        this.closeCreateTermModal();
+      },
+    });
+  }
+
+  onSubmitDeleteTerm() {
+    this.termService.delete(this.selectedTermId).subscribe({
+      next: () => {
+        this.toastUtil('Delete term successfully', true);
+        this.termService.init();
+        this.closeDeleteTermModal();
+      },
+      error: err => {
+        this.toastUtil('Delete term failed', false);
+        this.termService.init();
+        this.closeDeleteTermModal();
       },
     });
   }
