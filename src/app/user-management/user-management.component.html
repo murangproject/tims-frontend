@@ -27,7 +27,7 @@
       <div class="flex overflow-x-auto w-full h-full p-5">
         <table class="table table-normal w-full text-lg">
           <thead>
-            <tr class="text-center">
+            <tr>
               <th>First Name</th>
               <th>Middle Name</th>
               <th>Last Name</th>
@@ -39,7 +39,7 @@
           </thead>
           <tbody>
             <ng-container *ngIf="(activeUsers$ | async) ? true : false">
-              <tr class="text-center" *ngFor="let user of activeUsers$ | async">
+              <tr *ngFor="let user of activeUsers$ | async">
                 <td class="text-xl">{{ user.first_name }}</td>
                 <td class="text-xl">{{ user.middle_name }}</td>
                 <td class="text-xl">{{ user.last_name }}</td>
@@ -71,7 +71,7 @@
       <div class="flex overflow-x-auto w-full h-full p-5">
         <table class="table table-normal w-full text-lg">
           <thead>
-            <tr class="text-center">
+            <tr>
               <th>Email</th>
               <th>Role Name</th>
               <th>Role Type</th>
@@ -79,7 +79,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr class="text-center" *ngFor="let user of invitedUsers$ | async">
+            <tr *ngFor="let user of invitedUsers$ | async">
               <td class="text-xl">{{ user.email }}</td>
               <td class="text-xl">{{ user.role_name }}</td>
               <td class="text-xl">{{ getRoleName(user.role_type ?? '') }}</td>

@@ -12,6 +12,9 @@ const userEndpoint = `${baseUrl}/api/users`;
 // Department CRUD
 const departmentEndpoint = `${baseUrl}/api/departments`;
 
+// Academic Year CRUD
+const academicYearEndpoint = `${baseUrl}/api/academic-years`;
+
 export {
   loginEndpoint,
   logoutEndpoint,
@@ -19,4 +22,5 @@ export {
   tokenValidationEndpoint,
   userEndpoint,
   departmentEndpoint,
+  academicYearEndpoint,
 };
