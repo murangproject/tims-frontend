@@ -104,22 +104,33 @@
         <div
           class="flex flex-col rrounded-lg p-20 items-center justify-center gap-8 bg-base-100">
           <h1 class="text-4xl font-bold mb-6">Create New Academic Year</h1>
-          <input
-            type="number"
-            min="1960"
-            max="2099"
-            value="2023"
-            formControlName="start_year"
-            placeholder="Start Year"
-            class="input input-bordered input-neutral w-full max-w-xs" />
-          <input
-            type="number"
-            min="1960"
-            max="2099"
-            value="2024"
-            formControlName="end_year"
-            placeholder="End Year"
-            class="input input-bordered input-neutral w-full max-w-xs disabled" />
+          <div class="form-control w-full max-w-xs">
+            <label class="label">
+              <span class="label-text">Start Year</span>
+            </label>
+            <input
+              type="number"
+              min="1960"
+              max="2099"
+              value="2023"
+              (change)="updateEndYear()"
+              formControlName="start_year"
+              placeholder="Start Year"
+              class="input input-bordered input-neutral w-full max-w-xs" />
+          </div>
+          <div class="form-control w-full max-w-xs">
+            <label class="label">
+              <span class="label-text">End Year</span>
+            </label>
+            <input
+              type="number"
+              min="1960"
+              max="2099"
+              value="2024"
+              formControlName="end_year"
+              placeholder="End Year"
+              class="input input-bordered input-neutral w-full max-w-xs disabled" />
+          </div>
           <button
             class="btn w-full max-w-xs"
             type="submit"

@@ -55,7 +55,7 @@ export class SemesterManagementComponent implements OnInit {
         [Validators.required, Validators.min(1960), Validators.max(2099)],
       ],
       end_year: [
-        '',
+        { value: '', disabled: true },
         [Validators.required, Validators.min(1960), Validators.max(2099)],
       ],
     });
@@ -66,6 +66,12 @@ export class SemesterManagementComponent implements OnInit {
 
     this.academicYearService.init();
     this.termService.init();
+  }
+
+  updateEndYear() {
+    this.academicYearForm.patchValue({
+      end_year: this.academicYearForm.value.start_year + 1,
+    });
   }
 
   selectAcademicYear(id: number) {
@@ -117,18 +123,20 @@ export class SemesterManagementComponent implements OnInit {
       return;
     }
 
-    this.academicYearService.create(this.academicYearForm.value).subscribe({
-      next: () => {
-        this.toastUtil('Create academic year successfully', true);
-        this.academicYearService.init();
-        this.closeCreateAcademicYearModal();
-      },
-      error: err => {
-        this.toastUtil('Create academic year failed', false);
-        this.academicYearService.init();
-        this.closeCreateAcademicYearModal();
-      },
-    });
+    this.academicYearService
+      .create(this.academicYearForm.getRawValue())
+      .subscribe({
+        next: () => {
+          this.toastUtil('Create academic year successfully', true);
+          this.academicYearService.init();
+          this.closeCreateAcademicYearModal();
+        },
+        error: err => {
+          this.toastUtil('Create academic year failed', false);
+          this.academicYearService.init();
+          this.closeCreateAcademicYearModal();
+        },
+      });
   }
 
   openCreateTermModal() {

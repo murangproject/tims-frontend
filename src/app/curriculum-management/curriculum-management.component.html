@@ -1,14 +1,13 @@
 <div class="flex flex-col p-14">
   <div class="flex mb-8">
-    <div class="form-control w-full max-w-xs">
-      <label class="label">
-        <span class="label-text">Departments</span>
-      </label>
-      <select class="select select-bordered">
+    <div class="form-control w-full max-w-lg">
+      <select class="select select-lg select-bordered">
         <option disabled selected>Select a department</option>
-        <option>All</option>
-        <option>BSIT</option>
-        <option>BLIS</option>
+        <option
+          *ngFor="let department of departments$ | async"
+          [value]="department.id">
+          {{ department.name }}
+        </option>
       </select>
     </div>
   </div>
