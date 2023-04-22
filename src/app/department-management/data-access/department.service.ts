@@ -2,12 +2,11 @@
 
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, shareReplay, tap } from 'rxjs';
+import { BehaviorSubject, shareReplay, tap } from 'rxjs';
 import {
   Department,
   CreateDepartmentDto,
   UpdateDepartmentDto,
-  DeleteDepartmentDto,
 } from './department.model';
 import { departmentEndpoint } from 'src/app/shared/utils/api';
 
@@ -15,30 +14,62 @@ import { departmentEndpoint } from 'src/app/shared/utils/api';
   providedIn: 'root',
 })
 export class DepartmentService {
-  private departments: BehaviorSubject<Department[]> = new BehaviorSubject<
-    Department[]
-  >([]);
-  departments$ = this.departments
-    .asObservable()
-    .pipe(shareReplay({ bufferSize: 1, refCount: true }));
+  departments$ = new BehaviorSubject<Department[]>([]);
+  archives$ = new BehaviorSubject<Department[]>([]);
 
   constructor(private http: HttpClient) {}
 
-  getDepartments(): Observable<Department[]> {
+  init() {
     const headers = {
       Authorization: 'Bearer ' + localStorage.getItem('authToken'),
     };
-    return this.http
+
+    this.http
       .get<Department[]>(`${departmentEndpoint}`, { headers })
       .pipe(
         tap(res => {
-          this.departments.next(res);
-        }),
-        shareReplay({ bufferSize: 1, refCount: true })
-      );
+          this.departments$.next(res);
+        })
+      )
+      .subscribe();
+
+    this.http
+      .get<Department[]>(`${departmentEndpoint}/archives`, { headers })
+      .pipe(
+        tap(res => {
+          this.archives$.next(res);
+        })
+      )
+      .subscribe();
   }
 
-  createDepartment(createDepartmentDto: CreateDepartmentDto) {
+  getArchives() {
+    return this.archives$
+      .asObservable()
+      .pipe(shareReplay({ bufferSize: 1, refCount: true }));
+  }
+
+  getDepartments() {
+    return this.departments$
+      .asObservable()
+      .pipe(shareReplay({ bufferSize: 1, refCount: true }));
+  }
+
+  restore(id: number) {
+    const headers = {
+      Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+    };
+
+    return this.http.put<{ message: string }>(
+      `${departmentEndpoint}/restore/${id}`,
+      {},
+      {
+        headers,
+      }
+    );
+  }
+
+  create(createDepartmentDto: CreateDepartmentDto) {
     const headers = {
       Authorization: 'Bearer ' + localStorage.getItem('authToken'),
     };
@@ -52,7 +83,7 @@ export class DepartmentService {
     );
   }
 
-  updateDepartment(id: number, updateDepartmentDto: UpdateDepartmentDto) {
+  update(id: number, updateDepartmentDto: UpdateDepartmentDto) {
     const headers = {
       Authorization: 'Bearer ' + localStorage.getItem('authToken'),
     };
@@ -66,18 +97,16 @@ export class DepartmentService {
     );
   }
 
-  deleteDepartment(deleteDepartmentDto: DeleteDepartmentDto) {
+  delete(id: number) {
     const headers = {
       Authorization: 'Bearer ' + localStorage.getItem('authToken'),
     };
 
-    return this.http
-      .delete<{ message: string }>(
-        `${departmentEndpoint}/${deleteDepartmentDto.id}`,
-        {
-          headers,
-        }
-      )
-      .pipe(shareReplay({ bufferSize: 1, refCount: true }));
+    return this.http.delete<{ message: string }>(
+      `${departmentEndpoint}/${id}`,
+      {
+        headers,
+      }
+    );
   }
 }

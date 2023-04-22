@@ -1,26 +1,66 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, map, shareReplay, tap } from 'rxjs';
+import {
+  BehaviorSubject,
+  Observable,
+  map,
+  shareReplay,
+  switchMap,
+  tap,
+} from 'rxjs';
 import { userEndpoint } from '../../shared/utils/api';
-import { User, CreateUserDto, UpdateUserDto } from './users.model';
+import {
+  User,
+  CreateUserDto,
+  UpdateActiveUserDto,
+  UserReponse,
+  UpdateInvitedUserDto,
+} from './users.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UserService {
-  activeUsers: BehaviorSubject<User[]> = new BehaviorSubject<User[]>([{}]);
-  invitedUsers: BehaviorSubject<User[]> = new BehaviorSubject<User[]>([{}]);
-
-  activeUsers$ = this.activeUsers
-    .asObservable()
-    .pipe(shareReplay({ bufferSize: 1, refCount: true }));
-  invitedUsers$ = this.activeUsers
-    .asObservable()
-    .pipe(shareReplay({ bufferSize: 1, refCount: true }));
+  activeUsers$ = new BehaviorSubject<User[]>([]);
+  invitedUsers$ = new BehaviorSubject<User[]>([]);
 
   endpoint = userEndpoint;
 
   constructor(private http: HttpClient) {}
+
+  init() {
+    const header = {
+      Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+    };
+
+    this.http
+      .get<UserReponse>(`${this.endpoint}/active`, { headers: header })
+      .pipe(
+        map(res => res.users),
+        tap((res: User[]) => this.activeUsers$.next(res))
+      )
+      .subscribe();
+
+    this.http
+      .get<UserReponse>(`${this.endpoint}/invited`, { headers: header })
+      .pipe(
+        map(res => res.users),
+        tap((res: User[]) => this.invitedUsers$.next(res))
+      )
+      .subscribe();
+  }
+
+  getActive(): Observable<User[]> {
+    return this.activeUsers$
+      .asObservable()
+      .pipe(shareReplay({ bufferSize: 1, refCount: true }));
+  }
+
+  getInvited(): Observable<User[]> {
+    return this.invitedUsers$
+      .asObservable()
+      .pipe(shareReplay({ bufferSize: 1, refCount: true }));
+  }
 
   create(createuserDto: CreateUserDto) {
     const headers = {
@@ -36,70 +76,41 @@ export class UserService {
     );
   }
 
-  getActive() {
-    const headers = {
-      Authorization: 'Bearer ' + localStorage.getItem('authToken'),
-    };
-
-    return this.http
-      .get<{ users: User[] }>(`${this.endpoint}/active`, { headers })
-      .pipe(
-        tap(res => {
-          this.activeUsers.next(res.users);
-        }),
-        shareReplay({ bufferSize: 1, refCount: true })
-      );
-  }
-
-  getInvited() {
-    const headers = {
-      Authorization: 'Bearer ' + localStorage.getItem('authToken'),
-    };
-
-    return this.http
-      .get<{ users: User[] }>(`${this.endpoint}/invited`, { headers })
-      .pipe(
-        map(res => {
-          return { ...res };
-        }),
-        tap(res => {
-          this.invitedUsers.next(res.users);
-        }),
-        shareReplay({ bufferSize: 1, refCount: true })
-      );
-  }
-
   delete(id: number) {
     const headers = {
       Authorization: 'Bearer ' + localStorage.getItem('authToken'),
     };
 
-    return this.http
-      .delete<{ message: string }>(`${this.endpoint}/${id}`, {
-        headers,
-      })
-      .pipe(
-        tap(res => {
-          console.log(res);
-        }),
-        shareReplay({ bufferSize: 1, refCount: true })
-      );
+    return this.http.delete<{ message: string }>(`${this.endpoint}/${id}`, {
+      headers,
+    });
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
+  updateActiveUser(id: number, updateUserDto: UpdateActiveUserDto) {
     const headers = {
       Authorization: 'Bearer ' + localStorage.getItem('authToken'),
     };
 
-    return this.http
-      .put<{ message: string }>(`${this.endpoint}/${id}`, updateUserDto, {
+    return this.http.put<{ message: string }>(
+      `${this.endpoint}/${id}`,
+      updateUserDto,
+      {
         headers,
-      })
-      .pipe(
-        tap(res => {
-          console.log(res);
-        }),
-        shareReplay({ bufferSize: 1, refCount: true })
-      );
+      }
+    );
+  }
+
+  updateInvitedUser(id: number, updateUserDto: UpdateInvitedUserDto) {
+    const headers = {
+      Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+    };
+
+    return this.http.put<{ message: string }>(
+      `${this.endpoint}/${id}`,
+      updateUserDto,
+      {
+        headers,
+      }
+    );
   }
 }

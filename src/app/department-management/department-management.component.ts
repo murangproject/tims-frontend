@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Observable, filter, map, tap } from 'rxjs';
-import { Department } from './data-access/department.model';
+import { map, tap } from 'rxjs';
 import { DepartmentService } from './data-access/department.service';
 import {
   FormsModule,
@@ -17,19 +16,22 @@ import {
   templateUrl: './department-management.component.html',
 })
 export class DepartmentManagementComponent implements OnInit {
-  departments$ = this.departmentService.departments$;
+  departments$ = this.departmentService.getDepartments();
+  archives$ = this.departmentService.getArchives();
 
-  createOpen: boolean = false;
-  updateOpen: boolean = false;
-  deleteOpen: boolean = false;
+  tab: 'active' | 'archive' = 'active';
 
-  deleteId: number = -1;
-  updateId: number = -1;
+  // Modal
+  createDepartmentModalState: boolean = false;
+  updateDepartmentModalState: boolean = false;
+  deleteDepartmentModalState: boolean = false;
+
+  selectedId: number = -1;
 
   // toast
-  toastOpen: boolean = false;
-  success: boolean = false;
-  message: string = '';
+  toastModalState: boolean = false;
+  toastColor: boolean = false;
+  toastMessage: string = '';
 
   form: any = {
     code: '',
@@ -49,76 +51,125 @@ export class DepartmentManagementComponent implements OnInit {
       description: [''],
     });
 
-    this.departmentService.getDepartments().subscribe();
+    this.departmentService.init();
   }
 
-  onSubmit() {
+  openCreateDepartmentModal() {
+    this.createDepartmentModalState = true;
+    this.form.reset();
+  }
+
+  closeCreateDepartmentModal() {
+    this.createDepartmentModalState = false;
+    this.form.reset();
+    this.selectedId = -1;
+  }
+
+  openUpdateDepartmentModal() {
+    this.updateDepartmentModalState = true;
+    this.departments$
+      .pipe(
+        tap(departments => {
+          this.form.patchValue(
+            departments.find(department => department.id === this.selectedId)
+          );
+        })
+      )
+      .subscribe();
+  }
+
+  closeUpdateDepartmentModal() {
+    this.updateDepartmentModalState = false;
+    this.form.reset();
+    this.selectedId = -1;
+  }
+
+  submitCreateDepartment() {
     if (this.form.invalid) {
       return;
     }
 
-    this.departmentService.createDepartment(this.form.value).subscribe(
-      data => {
+    this.departmentService.create(this.form.value).subscribe({
+      next: () => {
         this.toastUtil('Department created successfully', true);
-        this.departmentService.getDepartments().subscribe();
+        this.departmentService.init();
+        this.closeCreateDepartmentModal();
       },
-      err => {
-        this.toastUtil('Department created failed', false);
-      }
-    );
-    this.createOpen = false;
-    this.form.reset();
-  }
-
-  setDeleteId(id: number) {
-    this.deleteId = id;
-  }
-
-  setUpdateId(id: number, code: string, name: string, description: string) {
-    this.updateId = id;
-    this.form.patchValue({
-      code: code,
-      name: name,
-      description: description,
+      error: () => {
+        this.toastUtil('Department creation failed', false);
+        this.departmentService.init();
+        this.closeCreateDepartmentModal();
+      },
     });
   }
 
-  update() {
+  submitUpdateDepartment() {
     if (this.form.invalid) {
       return;
     }
 
-    this.departmentService
-      .updateDepartment(this.updateId, this.form.value)
-      .subscribe(data => {
+    this.departmentService.update(this.selectedId, this.form.value).subscribe({
+      next: () => {
         this.toastUtil('Department updated successfully', true);
-        this.departmentService.getDepartments().subscribe();
-      });
-
-    this.form.reset();
-    this.updateOpen = false;
+        this.departmentService.init();
+        this.closeUpdateDepartmentModal();
+      },
+      error: () => {
+        this.toastUtil('Department update failed', false);
+        this.departmentService.init();
+        this.closeUpdateDepartmentModal();
+      },
+    });
   }
 
-  delete() {
-    this.departmentService.deleteDepartment({ id: this.deleteId }).subscribe(
-      data => {
+  openDeleteDepartmentModal() {
+    this.deleteDepartmentModalState = true;
+  }
+
+  closeDeleteDepartmentModal() {
+    this.deleteDepartmentModalState = false;
+    this.selectedId = -1;
+  }
+
+  submitDeleteDepartment() {
+    this.departmentService.delete(this.selectedId).subscribe({
+      next: () => {
         this.toastUtil('Department deleted successfully', true);
-        this.departmentService.getDepartments().subscribe();
+        this.departmentService.init();
+        this.closeDeleteDepartmentModal();
       },
-      err => {
-        this.toastUtil('Department deleted failed', false);
-      }
-    );
-    this.deleteOpen = false;
+      error: () => {
+        this.toastUtil('Department deletion failed', false);
+        this.departmentService.init();
+        this.closeDeleteDepartmentModal();
+      },
+    });
+  }
+
+  select(id: number) {
+    this.selectedId = id;
+  }
+
+  restore() {
+    this.departmentService.restore(this.selectedId).subscribe({
+      next: () => {
+        this.toastUtil('Department restored successfully', true);
+        this.departmentService.init();
+      },
+      error: () => {
+        this.toastUtil('Department restoration failed', false);
+        this.departmentService.init();
+      },
+    });
   }
 
   toastUtil(message: string, success: boolean) {
-    this.toastOpen = true;
-    this.success = success;
-    this.message = message;
+    this.toastModalState = true;
+    this.toastColor = success;
+    this.toastMessage = message;
     new Promise(resolve => setTimeout(resolve, 4000)).then(() => {
-      this.toastOpen = false;
-      this.message = '';
+      this.toastModalState = false;
+      this.toastMessage = '';
     });
   }
 }

@@ -15,7 +15,7 @@
       >
     </div>
     <div class="ml-auto flex">
-      <label (click)="invite_open = !invite_open" class="btn btn-wide m-4"
+      <label (click)="openCreateInviteUserModal()" class="btn btn-wide m-4"
         >INVITE A USER</label
       >
     </div>
@@ -38,24 +38,30 @@
             </tr>
           </thead>
           <tbody>
-            <tr class="text-center" *ngFor="let user of activeUsers$ | async">
-              <td class="text-xl">{{ user.first_name }}</td>
-              <td class="text-xl">{{ user.middle_name }}</td>
-              <td class="text-xl">{{ user.last_name }}</td>
-              <td class="text-xl">{{ user.email }}</td>
-              <td class="text-xl">{{ user.role_name }}</td>
-              <td class="text-xl">{{ user.role_type }}</td>
-              <td class="space-x-4 justify-center items-center text-center">
-                <button class="btn btn-primary bg-primary text-primary-content">
-                  edit
-                </button>
-                <button
-                  class="btn btn-accent bg-accent text-accent-content"
-                  (click)="select(user.id ?? -1); delete_open = !delete_open">
-                  delete
-                </button>
-              </td>
-            </tr>
+            <ng-container *ngIf="(activeUsers$ | async) ? true : false">
+              <tr class="text-center" *ngFor="let user of activeUsers$ | async">
+                <td class="text-xl">{{ user.first_name }}</td>
+                <td class="text-xl">{{ user.middle_name }}</td>
+                <td class="text-xl">{{ user.last_name }}</td>
+                <td class="text-xl">{{ user.email }}</td>
+                <td class="text-xl">{{ user.role_name }}</td>
+                <td class="text-xl">{{ getRoleName(user.role_type ?? '') }}</td>
+                <td class="space-x-4 justify-center items-center text-center">
+                  <button
+                    class="btn btn-primary bg-primary text-primary-content"
+                    (click)="
+                      select(user.id ?? -1); openUpdateActiveUserModal()
+                    ">
+                    edit
+                  </button>
+                  <button
+                    class="btn btn-accent bg-accent text-accent-content"
+                    (click)="select(user.id ?? -1); openDeleteUserModal()">
+                    delete
+                  </button>
+                </td>
+              </tr>
+            </ng-container>
           </tbody>
         </table>
       </div>
@@ -76,14 +82,16 @@
             <tr class="text-center" *ngFor="let user of invitedUsers$ | async">
               <td class="text-xl">{{ user.email }}</td>
               <td class="text-xl">{{ user.role_name }}</td>
-              <td class="text-xl">{{ user.role_type }}</td>
+              <td class="text-xl">{{ getRoleName(user.role_type ?? '') }}</td>
               <td class="space-x-4 justify-center items-center text-center">
-                <button class="btn btn-primary bg-primary text-primary-content">
+                <button
+                  class="btn btn-primary bg-primary text-primary-content"
+                  (click)="select(user.id ?? -1); openUpdateInviteUserModal()">
                   edit
                 </button>
                 <button
                   class="btn btn-accent bg-accent text-accent-content"
-                  (click)="select(user.id ?? -1); delete_open = !delete_open">
+                  (click)="select(user.id ?? -1); openDeleteUserModal()">
                   delete
                 </button>
               </td>
@@ -97,32 +105,32 @@
 
 <!--  TOAST -->
 <div class="toast toast-end">
-  <ng-container *ngIf="toast">
+  <ng-container *ngIf="toastModalState">
     <div
       class="alert alert-success"
-      [ngClass]="{ 'alert-success': success, 'alert-error': !success }">
+      [ngClass]="{ 'alert-success': toastColor, 'alert-error': !toastColor }">
       <div>
-        <span>{{ message }}</span>
+        <span>{{ toastMessage }}</span>
       </div>
     </div>
   </ng-container>
 </div>
 
-<!--  MODAL -->
+<!--  CREATE MODAL INVITED USER -->
 <label
   for="my-modal-4"
   class="modal modal-bottom sm:modal-middle cursor-pointer"
-  [ngClass]="{ 'modal-open': invite_open }">
+  [ngClass]="{ 'modal-open': createInviteUserModalState }">
   <label class="modal-box relative" for="">
     <label
       for="my-modal-4"
-      (click)="invite_open = !invite_open"
+      (click)="closeCreateInviteUserModal()"
       class="btn btn-sm btn-circle absolute right-2 top-2"
       >✕</label
     >
     <div class="flex">
       <form
-        [formGroup]="form"
+        [formGroup]="inviteUserForm"
         class="flex h-full w-full items-center justify-center">
         <div
           class="flex flex-col rrounded-lg p-20 items-center justify-center gap-8 bg-base-100">
@@ -149,8 +157,123 @@
           <button
             class="btn w-full max-w-xs"
             type="submit"
-            (click)="onSubmit()">
+            (click)="onSubmitCreateUser()">
             INVITE
+          </button>
+        </div>
+      </form>
+    </div>
+  </label>
+</label>
+
+<!--  UPDATE MODAL INVITED USER -->
+<label
+  for="my-modal-4"
+  class="modal modal-bottom sm:modal-middle cursor-pointer"
+  [ngClass]="{ 'modal-open': updateInvitedUserModalState }">
+  <label class="modal-box relative" for="">
+    <label
+      for="my-modal-4"
+      (click)="closeUpdateInviteUserModal()"
+      class="btn btn-sm btn-circle absolute right-2 top-2"
+      >✕</label
+    >
+    <div class="flex">
+      <form
+        [formGroup]="inviteUserForm"
+        class="flex h-full w-full items-center justify-center">
+        <div
+          class="flex flex-col rrounded-lg p-20 items-center justify-center gap-8 bg-base-100">
+          <h1 class="text-4xl font-bold mb-6">Update User Record</h1>
+          <input
+            type="text"
+            formControlName="email"
+            placeholder="Email"
+            class="input input-bordered input-neutral w-full max-w-xs" />
+          <input
+            type="text"
+            formControlName="role_name"
+            placeholder="Role Name"
+            class="input input-bordered input-neutral w-full max-w-xs" />
+          <select
+            class="select select-bordered w-full max-w-xs"
+            formControlName="role_type">
+            <option disabled selected>Select user role</option>
+            <option value="admin">Admin</option>
+            <option value="committee_chair">Committee Chair</option>
+            <option value="committee_member">Committee Member</option>
+            <option value="stakeholder">Stakeholder</option>
+          </select>
+          <button
+            class="btn w-full max-w-xs"
+            type="submit"
+            (click)="onSubmitUpdateInvitedUser()">
+            UPDATE
+          </button>
+        </div>
+      </form>
+    </div>
+  </label>
+</label>
+
+<!--  UPDATE MODAL ACTIVE USER -->
+<label
+  for="my-modal-4"
+  class="modal modal-bottom sm:modal-middle cursor-pointer"
+  [ngClass]="{ 'modal-open': updateActiveUserModalState }">
+  <label class="modal-box relative" for="">
+    <label
+      for="my-modal-4"
+      (click)="closeUpdateActiveUserModal()"
+      class="btn btn-sm btn-circle absolute right-2 top-2"
+      >✕</label
+    >
+    <div class="flex">
+      <form
+        [formGroup]="activeUserForm"
+        class="flex h-full w-full items-center justify-center">
+        <div
+          class="flex flex-col rrounded-lg p-20 items-center justify-center gap-8 bg-base-100">
+          <h1 class="text-4xl font-bold mb-6">Update User Record</h1>
+          <input
+            type="text"
+            formControlName="first_name"
+            placeholder="First Name"
+            class="input input-bordered input-neutral w-full max-w-xs" />
+          <input
+            type="text"
+            formControlName="middle_name"
+            placeholder="Middle Name"
+            class="input input-bordered input-neutral w-full max-w-xs" />
+          <input
+            type="text"
+            formControlName="last_name"
+            placeholder="Last Name"
+            class="input input-bordered input-neutral w-full max-w-xs" />
+          <input
+            type="text"
+            formControlName="email"
+            placeholder="Email"
+            class="input input-bordered input-neutral w-full max-w-xs" />
+          <input
+            type="text"
+            formControlName="role_name"
+            placeholder="Role Name"
+            class="input input-bordered input-neutral w-full max-w-xs" />
+          <select
+            class="select select-bordered w-full max-w-xs"
+            formControlName="role_type">
+            <option disabled selected>Select user role</option>
+            <option value="admin">Admin</option>
+            <option value="committee_chair">Committee Chair</option>
+            <option value="committee_member">Committee Member</option>
+            <option value="stakeholder">Stakeholder</option>
+          </select>
+          <button
+            class="btn w-full max-w-xs"
+            type="submit"
+            (click)="onSubmitUpdateActiveUser()">
+            UPDATE
           </button>
         </div>
       </form>
@@ -160,13 +283,15 @@
 
 <!-- DELETE MODAL -->
 <input type="checkbox" id="delete-modal" class="modal-toggle" />
-<div class="modal cursor-pointer" [ngClass]="{ 'modal-open': delete_open }">
+<div
+  class="modal cursor-pointer"
+  [ngClass]="{ 'modal-open': deleteUserModalState }">
   <div class="modal-box" for="">
     <h3 class="font-bold text-lg">Delete User</h3>
     <p class="py-4">Are you sure you want to delete this record?</p>
     <div class="modal-action">
-      <label class="btn" (click)="delete()">CONFIRM</label>
-      <label class="btn btn-outline" (click)="delete_open = !delete_open"
+      <label class="btn" (click)="deleteUser()">CONFIRM</label>
+      <label class="btn btn-outline" (click)="closeDeleteUserModal()"
         >CANCEL</label
       >
     </div>

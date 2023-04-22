@@ -6,8 +6,5 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './semester-management.component.html',
-  styleUrls: ['./semester-management.component.scss']
 })
-export class SemesterManagementComponent {
-
-}
+export class SemesterManagementComponent {}
