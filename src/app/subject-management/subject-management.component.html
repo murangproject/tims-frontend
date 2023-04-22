@@ -1,1 +1,164 @@
-<p>subject-management works!</p>
+<div class="flex flex-col">
+  <div class="ml-auto flex">
+    <label class="btn btn-wide m-4" (click)="openCreateSubjectModal()"
+      >CREATE A SUBJECT</label
+    >
+  </div>
+  <div class="flex overflow-x-auto w-full h-full p-5">
+    <table class="table table-compact w-full text-lg">
+      <thead>
+        <tr>
+          <th>Code</th>
+          <th>Title</th>
+          <th>Description</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let subject of subjects$ | async">
+          <td class="text-xl">{{ subject.code }}</td>
+          <td class="text-xl">{{ subject.title }}</td>
+          <td class="text-xl">{{ subject.description }}</td>
+          <td class="space-x-4 justify-center items-center text-center">
+            <button
+              class="btn btn-primary bg-primary text-primary-content"
+              (click)="
+                selectSubject(subject?.id ?? -1); openUpdateSubjectModal()
+              ">
+              edit
+            </button>
+            <button
+              class="btn btn-accent bg-accent text-accent-content"
+              (click)="
+                selectSubject(subject?.id ?? -1); openDeleteSubjectModal()
+              ">
+              delete
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- CREATE SUBJECT MODAL -->
+<label
+  for="my-modal-4"
+  class="modal modal-bottom sm:modal-middle cursor-pointer"
+  [ngClass]="{ 'modal-open': createSubjectModalState }">
+  <label class="modal-box relative" for="">
+    <label
+      for="my-modal-4"
+      (click)="closeCreateSubjectModal()"
+      class="btn btn-sm btn-circle absolute right-2 top-2"
+      >✕</label
+    >
+    <div class="flex">
+      <form
+        [formGroup]="subjectForm"
+        class="flex h-full w-full items-center justify-center">
+        <div
+          class="flex flex-col rrounded-lg p-20 items-center justify-center gap-8 bg-base-100">
+          <h1 class="text-4xl font-bold mb-6">Create New Subject</h1>
+          <input
+            type="text"
+            formControlName="code"
+            placeholder="Code"
+            class="input input-bordered input-neutral w-full max-w-xs" />
+          <input
+            type="text"
+            formControlName="title"
+            placeholder="Title"
+            class="input input-bordered input-neutral w-full max-w-xs" />
+          <input
+            type="text"
+            formControlName="description"
+            placeholder="Description"
+            class="input input-bordered input-neutral w-full max-w-xs" />
+          <button
+            class="btn w-full max-w-xs"
+            type="submit"
+            (click)="onSubmitCreateSubject()">
+            CREATE
+          </button>
+        </div>
+      </form>
+    </div>
+  </label>
+</label>
+
+<!-- UPDATE SUBJECT MODAL -->
+<label
+  for="my-modal-4"
+  class="modal modal-bottom sm:modal-middle cursor-pointer"
+  [ngClass]="{ 'modal-open': updateSubjectModalState }">
+  <label class="modal-box relative" for="">
+    <label
+      for="my-modal-4"
+      (click)="closeUpdateSubjectModal()"
+      class="btn btn-sm btn-circle absolute right-2 top-2"
+      >✕</label
+    >
+    <div class="flex">
+      <form
+        [formGroup]="subjectForm"
+        class="flex h-full w-full items-center justify-center">
+        <div
+          class="flex flex-col rrounded-lg p-20 items-center justify-center gap-8 bg-base-100">
+          <h1 class="text-4xl font-bold mb-6">Update Subject Record</h1>
+          <input
+            type="text"
+            formControlName="code"
+            placeholder="Code"
+            class="input input-bordered input-neutral w-full max-w-xs" />
+          <input
+            type="text"
+            formControlName="title"
+            placeholder="Title"
+            class="input input-bordered input-neutral w-full max-w-xs" />
+          <input
+            type="text"
+            formControlName="description"
+            placeholder="Description"
+            class="input input-bordered input-neutral w-full max-w-xs" />
+          <button
+            class="btn w-full max-w-xs"
+            type="submit"
+            (click)="onSubmitUpdateSubject()">
+            UPDATE
+          </button>
+        </div>
+      </form>
+    </div>
+  </label>
+</label>
+
+<!-- DELETE MODAL -->
+<input type="checkbox" id="delete-modal" class="modal-toggle" />
+<div
+  class="modal cursor-pointer"
+  [ngClass]="{ 'modal-open': deleteSubjectModalState }">
+  <div class="modal-box" for="">
+    <h3 class="font-bold text-lg">Delete Department</h3>
+    <p class="py-4">Are you sure you want to delete this record?</p>
+    <div class="modal-action">
+      <label class="btn" (click)="onSubmitDeleteSubject()">CONFIRM</label>
+      <label class="btn btn-outline" (click)="closeDeleteSubjectModal()"
+        >CANCEL</label
+      >
+    </div>
+  </div>
+</div>
+
+<!--  TOAST -->
+<div class="toast toast-end">
+  <ng-container *ngIf="toastModalState">
+    <div
+      class="alert alert-success"
+      [ngClass]="{ 'alert-success': toastColor, 'alert-error': !toastColor }">
+      <div>
+        <span>{{ toastMessage }}</span>
+      </div>
+    </div>
+  </ng-container>
+</div>
