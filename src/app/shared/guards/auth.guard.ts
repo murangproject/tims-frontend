@@ -22,6 +22,11 @@ export class AuthGuardService implements CanActivate {
     return this.auth.checkAuthentication().pipe(
       take(1),
       tap(auth => {
+        if (this.auth.checkInitialization()) {
+          this.router.navigate(['/account-initialize']);
+        }
+      }),
+      tap(auth => {
         if (!auth) {
           this.router.navigate(['/login']);
         }
