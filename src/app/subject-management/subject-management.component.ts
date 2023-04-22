@@ -5,6 +5,7 @@ import {
   FormsModule,
   ReactiveFormsModule,
   UntypedFormBuilder,
+  Validators,
 } from '@angular/forms';
 import { tap } from 'rxjs';
 
@@ -17,12 +18,13 @@ import { tap } from 'rxjs';
 export class SubjectManagementComponent implements OnInit {
   subjects$ = this.subjectService.getSubjects();
 
-  subjectForm: any = this.formBuilder.group({
+  subjectForm: any = {
     code: '',
     title: '',
+    lab_unit: '',
+    lec_unit: '',
     description: '',
-    syllabus: '',
-  });
+  };
 
   createSubjectModalState: boolean = false;
   updateSubjectModalState: boolean = false;
@@ -40,6 +42,20 @@ export class SubjectManagementComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.subjectForm = this.formBuilder.group({
+      code: ['', [Validators.required]],
+      title: ['', [Validators.required]],
+      lab_unit: [
+        '',
+        [Validators.required, Validators.min(0), Validators.max(5)],
+      ],
+      lec_unit: [
+        '',
+        [Validators.required, Validators.min(0), Validators.max(5)],
+      ],
+      description: [''],
+    });
+
     this.subjectService.init();
   }
 
@@ -103,7 +119,7 @@ export class SubjectManagementComponent implements OnInit {
   }
 
   onSubmitCreateSubject() {
-    this.subjectService.create(this.subjectForm.value).subscribe({
+    this.subjectService.create(this.subjectForm.getRawValue()).subscribe({
       next: res => {
         this.subjectService.init();
         this.toastUtil('Create subject is successful', true);

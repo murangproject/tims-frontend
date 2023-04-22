@@ -1,4 +1,4 @@
-<div class="flex flex-col max-w-[800px]">
+<div class="flex flex-col">
   <div class="flex items-center">
     <div class="ml-5 flex tabs">
       <a
@@ -34,7 +34,7 @@
   </div>
   <div class="flex overflow-x-auto w-full h-full p-5">
     <ng-container *ngIf="tab === 'year'">
-      <table class="table table-compact w-[800px] text-lg">
+      <table class="table table-compact w-full text-lg">
         <thead>
           <tr class="text-center">
             <th>Start Year</th>
@@ -48,7 +48,7 @@
             <td>{{ ay.end_year }}</td>
             <td>
               <button
-                class="btn btn-accent bg-accent text-accent-content"
+                class="btn btn-error bg-error text-error-content"
                 (click)="
                   selectAcademicYear(ay.id ?? -1); openDeleteAcademicYearModal()
                 ">
@@ -61,7 +61,7 @@
     </ng-container>
 
     <ng-container *ngIf="tab === 'term'">
-      <table class="table table-compact w-[800px] text-lg">
+      <table class="table table-compact w-full text-lg">
         <thead>
           <tr class="text-center">
             <th>Term</th>
@@ -73,7 +73,7 @@
             <td>{{ term.name }}</td>
             <td>
               <button
-                class="btn btn-accent bg-accent text-accent-content"
+                class="btn btn-error bg-error text-error-content"
                 (click)="selectTerm(term.id ?? -1); openDeleteTermModal()">
                 delete
               </button>

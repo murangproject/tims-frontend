@@ -11,6 +11,8 @@
           <th>Code</th>
           <th>Title</th>
           <th>Description</th>
+          <th>Lab unit</th>
+          <th>Lec unit</th>
           <th></th>
         </tr>
       </thead>
@@ -19,16 +21,18 @@
           <td class="text-xl">{{ subject.code }}</td>
           <td class="text-xl">{{ subject.title }}</td>
           <td class="text-xl">{{ subject.description }}</td>
+          <td class="text-xl">{{ subject.lab_unit }}</td>
+          <td class="text-xl">{{ subject.lec_unit }}</td>
           <td class="space-x-4 justify-center items-center text-center">
             <button
-              class="btn btn-primary bg-primary text-primary-content"
+              class="btn btn-secondary bg-secondary text-secondary-content"
               (click)="
                 selectSubject(subject?.id ?? -1); openUpdateSubjectModal()
               ">
               edit
             </button>
             <button
-              class="btn btn-accent bg-accent text-accent-content"
+              class="btn btn-error bg-error text-error-content"
               (click)="
                 selectSubject(subject?.id ?? -1); openDeleteSubjectModal()
               ">
@@ -69,6 +73,22 @@
             type="text"
             formControlName="title"
             placeholder="Title"
+            class="input input-bordered input-neutral w-full max-w-xs" />
+          <input
+            type="number"
+            min="0"
+            max="5"
+            value="0"
+            formControlName="lab_unit"
+            placeholder="Lab Units"
+            class="input input-bordered input-neutral w-full max-w-xs" />
+          <input
+            type="number"
+            min="0"
+            max="5"
+            value="0"
+            formControlName="lec_unit"
+            placeholder="Lec Units"
             class="input input-bordered input-neutral w-full max-w-xs" />
           <input
             type="text"
@@ -115,6 +135,22 @@
             type="text"
             formControlName="title"
             placeholder="Title"
+            class="input input-bordered input-neutral w-full max-w-xs" />
+          <input
+            type="number"
+            min="0"
+            max="5"
+            value="0"
+            formControlName="lab_unit"
+            placeholder="Lab Units"
+            class="input input-bordered input-neutral w-full max-w-xs" />
+          <input
+            type="number"
+            min="0"
+            max="5"
+            value="0"
+            formControlName="lec_unit"
+            placeholder="Lec Units"
             class="input input-bordered input-neutral w-full max-w-xs" />
           <input
             type="text"

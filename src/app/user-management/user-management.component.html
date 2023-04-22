@@ -48,14 +48,14 @@
                 <td class="text-xl">{{ getRoleName(user.role_type ?? '') }}</td>
                 <td class="space-x-4 justify-center items-center text-center">
                   <button
-                    class="btn btn-primary bg-primary text-primary-content"
+                    class="btn btn-secondary bg-secondary text-secondary-content"
                     (click)="
                       select(user.id ?? -1); openUpdateActiveUserModal()
                     ">
                     edit
                   </button>
                   <button
-                    class="btn btn-accent bg-accent text-accent-content"
+                    class="btn btn-error bg-error text-error-content"
                     (click)="select(user.id ?? -1); openDeleteUserModal()">
                     delete
                   </button>
@@ -85,12 +85,12 @@
               <td class="text-xl">{{ getRoleName(user.role_type ?? '') }}</td>
               <td class="space-x-4 justify-center items-center text-center">
                 <button
-                  class="btn btn-primary bg-primary text-primary-content"
+                  class="btn btn-secondary bg-secondary text-secondary-content"
                   (click)="select(user.id ?? -1); openUpdateInviteUserModal()">
                   edit
                 </button>
                 <button
-                  class="btn btn-accent bg-accent text-accent-content"
+                  class="btn btn-error bg-error text-error-content"
                   (click)="select(user.id ?? -1); openDeleteUserModal()">
                   delete
                 </button>
