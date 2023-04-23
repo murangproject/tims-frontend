@@ -1,1 +1,44 @@
-<p>{{ id }}</p>
+<div class="flex flex-col p-14">
+  <form>
+    <div class="form-control w-full max-w-md">
+      <label class="label">
+        <span class="label-text text-lg">Select Department For</span>
+      </label>
+      <select class="select select-bordered">
+        <option disabled selected>Pick one</option>
+        <option
+          *ngFor="let department of departments$ | async"
+          [value]="department.id">
+          {{ department.name }}
+        </option>
+      </select>
+    </div>
+
+    <div class="form-control w-full max-w-lg">
+      <label class="label">
+        <span class="label-text text-lg"> Curriculum Code </span>
+      </label>
+      <input
+        type="text"
+        placeholder="Type here"
+        class="input input-lg input-bordered w-full max-w-md" />
+    </div>
+    <div class="form-control w-full max-w-lg">
+      <label class="label">
+        <span class="label-text text-lg"> Curriculum Title </span>
+      </label>
+      <input
+        type="text"
+        placeholder="Type here"
+        class="input input-lg input-bordered w-full max-w-md" />
+    </div>
+    <div class="form-control w-full max-w-md">
+      <label class="label">
+        <span class="label-text text-lg">Curriculum Description</span>
+      </label>
+      <textarea
+        class="textarea textarea-lg textarea-bordered h-40"
+        placeholder="Bio"></textarea>
+    </div>
+  </form>
+</div>

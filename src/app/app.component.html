@@ -1,1 +1,14 @@
 <router-outlet></router-outlet>
+
+<!--  TOAST -->
+<div class="toast toast-end">
+  <ng-container *ngIf="toast$ | async as t">
+    <div
+      class="alert alert-success"
+      [ngClass]="{ 'alert-success': t.success, 'alert-error': !t.success }">
+      <div>
+        <span>{{ t.message }}</span>
+      </div>
+    </div>
+  </ng-container>
+</div>

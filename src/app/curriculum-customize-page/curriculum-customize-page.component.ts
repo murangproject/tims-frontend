@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
+import { DepartmentService } from '../department-management/data-access/department.service';
 
 @Component({
   selector: 'app-curriculum-customize-page',
@@ -9,14 +10,11 @@ import { ActivatedRoute, Router } from '@angular/router';
   templateUrl: './curriculum-customize-page.component.html',
 })
 export class CurriculumCustomizePageComponent implements OnInit {
-  constructor(private route: ActivatedRoute) {}
+  departments$ = this.departmentService.getDepartments();
 
-  id: string = '';
+  constructor(private departmentService: DepartmentService) {}
 
   ngOnInit(): void {
-    this.route.params.subscribe(params => {
-      this.id = params['id'] ?? '';
-      console.log(params);
-    });
+    this.departmentService.init();
   }
 }

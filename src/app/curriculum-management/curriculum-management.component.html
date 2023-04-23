@@ -1,7 +1,7 @@
 <div class="flex flex-col p-14">
   <div class="flex mb-8">
     <div class="form-control w-full max-w-lg">
-      <select class="select select-lg select-bordered">
+      <select class="select select-bordered">
         <option disabled selected>Select a department</option>
         <option
           *ngFor="let department of departments$ | async"
@@ -12,12 +12,12 @@
     </div>
   </div>
   <div class="flex gap-8 flex-wrap flex-row">
-    <app-curriculum-card>
+    <app-curriculum-card *ngFor="let curriculum of curriculums$ | async">
       <div class="flex flex-col p-8 gap-2">
         <div class="flex flex-row">
           <div class="flex">
             <h1 class="text-2xl font-bold">
-              Bachelor's of Science in Information Technology
+              {{ curriculum.title }}
             </h1>
           </div>
         </div>
@@ -25,7 +25,9 @@
           <p class="text-base">Submitted By: Rosemarie M. Bautista, DIT</p>
         </div>
         <div class="flex">
-          <p class="text-base">Submitted Date: April 17, 2023</p>
+          <p class="text-base">
+            Submitted Date: {{ curriculum.created_at?.toLocaleDateString() }}
+          </p>
         </div>
         <div class="flex">
           <div class="text-base">
@@ -45,132 +47,54 @@
         </div>
       </div>
     </app-curriculum-card>
-    <app-curriculum-card>
-      <div class="flex flex-col p-8 gap-2">
-        <div class="flex">
-          <h1 class="text-2xl font-bold">
-            Bachelor's of Science in Information Technology
-          </h1>
-        </div>
-        <div class="flex">
-          <p class="text-base">Submitted By: Rosemarie M. Bautista, DIT</p>
-        </div>
-        <div class="flex">
-          <p class="text-base">Submitted Date: April 17, 2023</p>
-        </div>
-        <div class="flex">
-          <div class="text-base">
-            Status:
-            <div class="badge rounded-lg badge-lg badge-warning">
-              Under Review
-            </div>
-          </div>
-        </div>
-        <div class="flex">
-          <div class="text-base">
-            <div class="badge rounded-lg badge-lg badge-warning">
-              Comments: 24
-            </div>
-          </div>
-        </div>
-        <div class="flex justify-center mt-auto">
-          <button class="btn btn-primary rounded-2xl">View Curriculum</button>
-        </div>
-      </div>
-    </app-curriculum-card>
-    <app-curriculum-card>
-      <div class="flex flex-col p-8 gap-2">
-        <div class="flex">
-          <h1 class="text-2xl font-bold">
-            Bachelor's of Science in Information Technology
-          </h1>
-        </div>
-        <div class="flex">
-          <p class="text-base">Submitted By: Rosemarie M. Bautista, DIT</p>
-        </div>
-        <div class="flex">
-          <p class="text-base">Submitted Date: April 17, 2023</p>
-        </div>
-        <div class="flex">
-          <div class="text-base">
-            Status:
-            <div class="badge rounded-lg badge-lg badge-error">Declined</div>
-          </div>
-        </div>
-        <div class="flex">
-          <div class="text-base">
-            <div class="badge rounded-lg badge-lg badge-warning">
-              Comments: 2
-            </div>
-          </div>
-        </div>
-        <div class="flex justify-center mt-auto">
-          <button class="btn btn-primary rounded-2xl">View Curriculum</button>
-        </div>
-      </div>
-    </app-curriculum-card>
-    <app-curriculum-card>
-      <div class="flex flex-col p-8 gap-2">
-        <div class="flex">
-          <h1 class="text-2xl font-bold">
-            Bachelor's of Science in Information Technology
-          </h1>
-        </div>
-        <div class="flex">
-          <p class="text-base">Submitted By: Rosemarie M. Bautista, DIT</p>
-        </div>
-        <div class="flex">
-          <p class="text-base">Submitted Date: April 17, 2023</p>
-        </div>
-        <div class="flex">
-          <div class="text-base">
-            Status:
-            <div class="badge rounded-lg badge-lg badge-success">Approved</div>
-          </div>
-        </div>
-        <div class="flex">
-          <div class="text-base">
-            <div class="badge rounded-lg badge-lg badge-warning">
-              Comments: 24
-            </div>
-          </div>
-        </div>
-        <div class="flex justify-center mt-auto">
-          <button class="btn btn-primary rounded-2xl">View Curriculum</button>
-        </div>
-      </div>
-    </app-curriculum-card>
-    <app-curriculum-card>
-      <div class="flex flex-col p-8 gap-2">
-        <div class="flex">
-          <h1 class="text-2xl font-bold">
-            Bachelor's of Science in Information Technology
-          </h1>
-        </div>
-        <div class="flex">
-          <p class="text-base">Submitted By: Rosemarie M. Bautista, DIT</p>
-        </div>
-        <div class="flex">
-          <p class="text-base">Submitted Date: April 17, 2023</p>
-        </div>
-        <div class="flex">
-          <div class="text-base">
-            Status:
-            <div class="badge rounded-lg badge-lg badge-success">Approved</div>
-          </div>
-        </div>
-        <div class="flex">
-          <div class="text-base">
-            <div class="badge rounded-lg badge-lg badge-warning">
-              Comments: 1
-            </div>
-          </div>
-        </div>
-        <div class="flex justify-center mt-auto">
-          <button class="btn btn-primary rounded-2xl">View Curriculum</button>
-        </div>
-      </div>
-    </app-curriculum-card>
-    <app-curriculum-card [cardMode]="'blueprint'" />
+    <app-curriculum-card
+      [cardMode]="'blueprint'"
+      (buttonClick)="openCreateCurriculumModal()" />
   </div>
 </div>
+
+<!-- CREATE MODAL -->
+<label
+  for="my-modal-4"
+  class="modal modal-bottom sm:modal-middle cursor-pointer"
+  [ngClass]="{ 'modal-open': createCurriculumModalState }">
+  <label class="modal-box relative" for="">
+    <label
+      for="my-modal-4"
+      (click)="closeCreateCurriculumModal()"
+      class="btn btn-sm btn-circle absolute right-2 top-2"
+      >✕</label
+    >
+    <div class="flex">
+      <form
+        [formGroup]="form"
+        class="flex h-full w-full items-center justify-center">
+        <div
+          class="flex flex-col rrounded-lg p-20 items-center justify-center gap-8 bg-base-100">
+          <h1 class="text-4xl font-bold mb-6">Create New Curriculum</h1>
+          <input
+            type="text"
+            formControlName="code"
+            placeholder="Code"
+            class="input input-bordered input-neutral w-full max-w-xs" />
+          <input
+            type="text"
+            formControlName="name"
+            placeholder="Name"
+            class="input input-bordered input-neutral w-full max-w-xs" />
+          <input
+            type="text"
+            formControlName="description"
+            placeholder="Description"
+            class="input input-bordered input-neutral w-full max-w-xs" />
+          <button
+            class="btn w-full max-w-xs"
+            type="submit"
+            (click)="onSubmitCreateCurriculum()">
+            CREATE
+          </button>
+        </div>
+      </form>
+    </div>
+  </label>
+</label>

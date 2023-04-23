@@ -21,6 +21,9 @@ const termEndpoint = `${baseUrl}/api/terms`;
 // Subject CRUD
 const subjectEndpoint = `${baseUrl}/api/subjects`;
 
+// Curriculum CRUD
+const curriculumEndpoint = `${baseUrl}/api/curriculums`;
+
 export {
   loginEndpoint,
   logoutEndpoint,
@@ -31,4 +34,5 @@ export {
   academicYearEndpoint,
   termEndpoint,
   subjectEndpoint,
+  curriculumEndpoint,
 };
