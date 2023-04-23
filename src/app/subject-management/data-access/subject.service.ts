@@ -52,13 +52,13 @@ export class SubjectService {
     );
   }
 
-  update(id: number, updateSubjectDto: UpdateSubjectDto) {
+  update(code: string, updateSubjectDto: UpdateSubjectDto) {
     const headers = {
       Authorization: 'Bearer ' + localStorage.getItem('authToken'),
     };
 
     return this.http.put<{ message: string }>(
-      `${subjectEndpoint}/${id}`,
+      `${subjectEndpoint}/${code}`,
       updateSubjectDto,
       {
         headers,
@@ -66,12 +66,12 @@ export class SubjectService {
     );
   }
 
-  delete(id: number) {
+  delete(code: string) {
     const headers = {
       Authorization: 'Bearer ' + localStorage.getItem('authToken'),
     };
 
-    return this.http.delete<{ message: string }>(`${subjectEndpoint}/${id}`, {
+    return this.http.delete<{ message: string }>(`${subjectEndpoint}/${code}`, {
       headers,
     });
   }

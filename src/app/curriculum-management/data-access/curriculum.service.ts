@@ -52,12 +52,33 @@ export class CurriculumService {
       Authorization: 'Bearer ' + localStorage.getItem('authToken'),
     };
 
+    if (updateCurriculumDto.subject_ids) {
+      this.http
+        .post<{ message: string }>(
+          `${curriculumEndpoint}/${id}/subjects`,
+          { subject_ids: updateCurriculumDto.subject_ids },
+          { headers }
+        )
+        .subscribe(res => console.log(res));
+    }
+
     return this.http.put<{ message: string }>(
       `${curriculumEndpoint}/${id}`,
       updateCurriculumDto,
       {
         headers,
       }
+    );
+  }
+
+  delete(currentCurriculumId: number) {
+    const headers = {
+      Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+    };
+
+    return this.http.delete<{ message: string }>(
+      `${curriculumEndpoint}/${currentCurriculumId}`,
+      { headers }
     );
   }
 }

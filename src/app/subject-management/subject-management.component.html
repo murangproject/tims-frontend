@@ -7,34 +7,42 @@
   <div class="flex overflow-x-auto w-full h-full p-5">
     <table class="table table-compact w-full text-lg">
       <thead>
-        <tr>
+        <tr class="text-left">
+          <th>Year Level</th>
+          <th>Term</th>
           <th>Code</th>
           <th>Title</th>
           <th>Description</th>
-          <th>Lab unit</th>
-          <th>Lec unit</th>
+          <th>Units</th>
+          <th>Hours</th>
+          <th>Prerequisite</th>
+          <th>Corequisite</th>
           <th></th>
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let subject of subjects$ | async">
+          <td class="text-xl">{{ subject.year_level }}</td>
+          <td class="text-xl">{{ subject.term }}</td>
           <td class="text-xl">{{ subject.code }}</td>
           <td class="text-xl">{{ subject.title }}</td>
           <td class="text-xl">{{ subject.description }}</td>
-          <td class="text-xl">{{ subject.lab_unit }}</td>
-          <td class="text-xl">{{ subject.lec_unit }}</td>
+          <td class="text-xl">{{ subject.units }}</td>
+          <td class="text-xl">{{ subject.hours }}</td>
+          <td class="text-xl">{{ subject.prerequisite?.code ?? '' }}</td>
+          <td class="text-xl">{{ subject.corequisite?.code ?? '' }}</td>
           <td class="space-x-4 justify-center items-center text-center">
             <button
               class="btn btn-secondary bg-secondary text-secondary-content"
               (click)="
-                selectSubject(subject?.id ?? -1); openUpdateSubjectModal()
+                selectSubject(subject?.code ?? ''); openUpdateSubjectModal()
               ">
               edit
             </button>
             <button
               class="btn btn-error bg-error text-error-content"
               (click)="
-                selectSubject(subject?.id ?? -1); openDeleteSubjectModal()
+                selectSubject(subject?.code ?? ''); openDeleteSubjectModal()
               ">
               delete
             </button>
@@ -46,55 +54,114 @@
 </div>
 
 <!-- CREATE SUBJECT MODAL -->
-<label
+<div
   for="my-modal-4"
-  class="modal modal-bottom sm:modal-middle cursor-pointer"
+  class="modal modal-bottom sm:modal-middle cursor-pointer min-w-[800px]"
   [ngClass]="{ 'modal-open': createSubjectModalState }">
-  <label class="modal-box relative" for="">
+  <label class="modal-box relative min-w-[800px]" for="">
     <label
       for="my-modal-4"
       (click)="closeCreateSubjectModal()"
       class="btn btn-sm btn-circle absolute right-2 top-2"
       >✕</label
     >
-    <div class="flex">
+    <div class="flex overflow-x-hidden">
       <form
         [formGroup]="subjectForm"
-        class="flex h-full w-full items-center justify-center">
+        class="h-full min-w-[800px] items-center justify-center">
+        <h1 class="text-4xl font-bold mb-6 text-center">Create New Subject</h1>
         <div
-          class="flex flex-col rrounded-lg p-20 items-center justify-center gap-8 bg-base-100">
-          <h1 class="text-4xl font-bold mb-6">Create New Subject</h1>
-          <input
-            type="text"
-            formControlName="code"
-            placeholder="Code"
-            class="input input-bordered input-neutral w-full max-w-xs" />
-          <input
-            type="text"
-            formControlName="title"
-            placeholder="Title"
-            class="input input-bordered input-neutral w-full max-w-xs" />
-          <input
-            type="number"
-            min="0"
-            max="5"
-            value="0"
-            formControlName="lab_unit"
-            placeholder="Lab Units"
-            class="input input-bordered input-neutral w-full max-w-xs" />
-          <input
-            type="number"
-            min="0"
-            max="5"
-            value="0"
-            formControlName="lec_unit"
-            placeholder="Lec Units"
-            class="input input-bordered input-neutral w-full max-w-xs" />
-          <input
-            type="text"
-            formControlName="description"
-            placeholder="Description"
-            class="input input-bordered input-neutral w-full max-w-xs" />
+          class="grid grid-cols-2 rounded-lg items-center justify-center gap-8 bg-base-100">
+          <div class="form-control w-full max-w-sm">
+            <label class="label">
+              <span class="label-text">Year Level</span>
+            </label>
+            <input
+              type="number"
+              min="1"
+              max="10"
+              value="0"
+              formControlName="year_level"
+              placeholder="Year Level"
+              class="input input-bordered input-neutral w-full max-w-xs" />
+          </div>
+
+          <div class="form-control w-full max-w-sm">
+            <label class="label">
+              <span class="label-text">Term</span>
+            </label>
+            <input
+              type="number"
+              min="1"
+              max="4"
+              value="0"
+              formControlName="term"
+              placeholder="Term"
+              class="input input-bordered input-neutral w-full max-w-xs" />
+          </div>
+
+          <div class="form-control w-full max-w-sm">
+            <label class="label">
+              <span class="label-text">Course Code</span>
+            </label>
+            <input
+              type="text"
+              formControlName="code"
+              placeholder="Code"
+              class="input input-bordered input-neutral w-full max-w-xs" />
+          </div>
+
+          <div class="form-control w-full max-w-sm">
+            <label class="label">
+              <span class="label-text">Course Title</span>
+            </label>
+            <input
+              type="text"
+              formControlName="title"
+              placeholder="Title"
+              class="input input-bordered input-neutral w-full max-w-xs" />
+          </div>
+
+          <div class="form-control w-full max-w-sm">
+            <label class="label">
+              <span class="label-text">Course Description</span>
+            </label>
+            <input
+              type="text"
+              formControlName="description"
+              placeholder="Description"
+              class="input input-bordered input-neutral w-full max-w-xs" />
+          </div>
+
+          <div class="form-control w-full max-w-sm">
+            <label class="label">
+              <span class="label-text">Units</span>
+            </label>
+            <input
+              type="number"
+              min="0"
+              max="5"
+              value="0"
+              formControlName="units"
+              placeholder="Units"
+              class="input input-bordered input-neutral w-full max-w-xs" />
+          </div>
+
+          <div class="form-control w-full max-w-sm">
+            <label class="label">
+              <span class="label-text">Hours</span>
+            </label>
+            <input
+              type="number"
+              min="0"
+              max="12"
+              value="0"
+              formControlName="hours"
+              placeholder="Hours"
+              class="input input-bordered input-neutral w-full max-w-xs" />
+          </div>
+        </div>
+        <div class="flex justify-center mt-6">
           <button
             class="btn w-full max-w-xs"
             type="submit"
@@ -105,69 +172,7 @@
       </form>
     </div>
   </label>
-</label>
-
-<!-- UPDATE SUBJECT MODAL -->
-<label
-  for="my-modal-4"
-  class="modal modal-bottom sm:modal-middle cursor-pointer"
-  [ngClass]="{ 'modal-open': updateSubjectModalState }">
-  <label class="modal-box relative" for="">
-    <label
-      for="my-modal-4"
-      (click)="closeUpdateSubjectModal()"
-      class="btn btn-sm btn-circle absolute right-2 top-2"
-      >✕</label
-    >
-    <div class="flex">
-      <form
-        [formGroup]="subjectForm"
-        class="flex h-full w-full items-center justify-center">
-        <div
-          class="flex flex-col rrounded-lg p-20 items-center justify-center gap-8 bg-base-100">
-          <h1 class="text-4xl font-bold mb-6">Update Subject Record</h1>
-          <input
-            type="text"
-            formControlName="code"
-            placeholder="Code"
-            class="input input-bordered input-neutral w-full max-w-xs" />
-          <input
-            type="text"
-            formControlName="title"
-            placeholder="Title"
-            class="input input-bordered input-neutral w-full max-w-xs" />
-          <input
-            type="number"
-            min="0"
-            max="5"
-            value="0"
-            formControlName="lab_unit"
-            placeholder="Lab Units"
-            class="input input-bordered input-neutral w-full max-w-xs" />
-          <input
-            type="number"
-            min="0"
-            max="5"
-            value="0"
-            formControlName="lec_unit"
-            placeholder="Lec Units"
-            class="input input-bordered input-neutral w-full max-w-xs" />
-          <input
-            type="text"
-            formControlName="description"
-            placeholder="Description"
-            class="input input-bordered input-neutral w-full max-w-xs" />
-          <button
-            class="btn w-full max-w-xs"
-            type="submit"
-            (click)="onSubmitUpdateSubject()">
-            UPDATE
-          </button>
-        </div>
-      </form>
-    </div>
-  </label>
-</label>
+</div>
 
 <!-- DELETE MODAL -->
 <input type="checkbox" id="delete-modal" class="modal-toggle" />
@@ -184,6 +189,161 @@
       >
     </div>
   </div>
+</div>
+
+<!-- UPDATE SUBJECT MODAL -->
+<div
+  for="my-modal-4"
+  class="modal modal-bottom sm:modal-middle cursor-pointer min-w-[800px]"
+  [ngClass]="{ 'modal-open': updateSubjectModalState }">
+  <label class="modal-box relative min-w-[800px]" for="">
+    <label
+      for="my-modal-4"
+      (click)="closeUpdateSubjectModal()"
+      class="btn btn-sm btn-circle absolute right-2 top-2"
+      >✕</label
+    >
+    <div class="flex overflow-x-hidden">
+      <form
+        [formGroup]="subjectForm"
+        class="h-full min-w-[800px] items-center justify-center">
+        <h1 class="text-4xl font-bold mb-6 text-center">
+          Update Subject Record
+        </h1>
+        <div
+          class="grid grid-cols-2 rounded-lg items-center justify-center gap-8 bg-base-100">
+          <div class="form-control w-full max-w-sm">
+            <label class="label">
+              <span class="label-text">Year Level</span>
+            </label>
+            <input
+              type="number"
+              min="1"
+              max="10"
+              value="0"
+              formControlName="year_level"
+              placeholder="Year Level"
+              class="input input-bordered input-neutral w-full max-w-xs" />
+          </div>
+
+          <div class="form-control w-full max-w-sm">
+            <label class="label">
+              <span class="label-text">Term</span>
+            </label>
+            <input
+              type="number"
+              min="1"
+              max="4"
+              value="0"
+              formControlName="term"
+              placeholder="Term"
+              class="input input-bordered input-neutral w-full max-w-xs" />
+          </div>
+
+          <div class="form-control w-full max-w-sm">
+            <label class="label">
+              <span class="label-text">Course Code</span>
+            </label>
+            <input
+              type="text"
+              formControlName="code"
+              placeholder="Code"
+              class="input input-bordered input-neutral w-full max-w-xs" />
+          </div>
+
+          <div class="form-control w-full max-w-sm">
+            <label class="label">
+              <span class="label-text">Course Title</span>
+            </label>
+            <input
+              type="text"
+              formControlName="title"
+              placeholder="Title"
+              class="input input-bordered input-neutral w-full max-w-xs" />
+          </div>
+
+          <div class="form-control w-full max-w-sm">
+            <label class="label">
+              <span class="label-text">Course Description</span>
+            </label>
+            <input
+              type="text"
+              formControlName="description"
+              placeholder="Description"
+              class="input input-bordered input-neutral w-full max-w-xs" />
+          </div>
+
+          <div class="form-control w-full max-w-sm">
+            <label class="label">
+              <span class="label-text">Units</span>
+            </label>
+            <input
+              type="number"
+              min="0"
+              max="5"
+              value="0"
+              formControlName="units"
+              placeholder="Units"
+              class="input input-bordered input-neutral w-full max-w-xs" />
+          </div>
+
+          <div class="form-control w-full max-w-sm">
+            <label class="label">
+              <span class="label-text">Hours</span>
+            </label>
+            <input
+              type="number"
+              min="0"
+              max="12"
+              value="0"
+              formControlName="hours"
+              placeholder="Hours"
+              class="input input-bordered input-neutral w-full max-w-xs" />
+          </div>
+          <div class="form-control w-full max-w-xs">
+            <label class="label">
+              <span class="label-text">Prerequisite</span>
+            </label>
+            <select
+              class="select select-bordered"
+              formControlName="prerequisite_code">
+              <option disabled selected>Select Prerequisite</option>
+              <option value="">None</option>
+              <option
+                *ngFor="let subject of prerequisites$ | async"
+                [value]="subject.code">
+                {{ subject.code }}
+              </option>
+            </select>
+          </div>
+          <div class="form-control w-full max-w-xs">
+            <label class="label">
+              <span class="label-text">Corequisite</span>
+            </label>
+            <select
+              class="select select-bordered"
+              formControlName="corequisite_code">
+              <option disabled selected>Select Corequisite</option>
+              <option value="">None</option>
+              <option
+                *ngFor="let subject of corequisites$ | async"
+                [value]="subject.code">
+                {{ subject.code }}
+              </option>
+            </select>
+          </div>
+        </div>
+        <div class="flex justify-center mt-6">
+          <button
+            class="btn w-full max-w-xs"
+            type="submit"
+            (click)="onSubmitUpdateSubject()">
+            UPDATE
+          </button>
+        </div>
+      </form>
+    </div>
+  </label>
 </div>
 
 <!--  TOAST -->

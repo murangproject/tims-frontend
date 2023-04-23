@@ -1,44 +1,116 @@
 <div class="flex flex-col p-14">
-  <form>
-    <div class="form-control w-full max-w-md">
-      <label class="label">
-        <span class="label-text text-lg">Select Department For</span>
-      </label>
-      <select class="select select-bordered">
-        <option disabled selected>Pick one</option>
-        <option
-          *ngFor="let department of departments$ | async"
-          [value]="department.id">
-          {{ department.name }}
-        </option>
-      </select>
+  <div class="flex">
+    <div class="flex flex-row justify-between w-full">
+      <div class="flex">
+        <a class="btn btn-ghost" [routerLink]="'/admin/curriculum-management'"
+          >< Back</a
+        >
+      </div>
+      <div class="flex">
+        <button class="btn btn-error" (click)="openDeleteCurriculumModal()">
+          Delete
+        </button>
+      </div>
     </div>
+  </div>
 
-    <div class="form-control w-full max-w-lg">
-      <label class="label">
-        <span class="label-text text-lg"> Curriculum Code </span>
-      </label>
-      <input
-        type="text"
-        placeholder="Type here"
-        class="input input-lg input-bordered w-full max-w-md" />
+  <p class="label-text text-2xl font-bold my-20">
+    {{ (curriculum$ | async)?.department?.name }}
+  </p>
+  <form
+    class="flex flex-col lg:flex-row items-center lg:items-start p-5 gap-4"
+    [formGroup]="form">
+    <div
+      class="flex flex-col lg:mr-4 min-w-[500px] items-center justify-center lg:justify-start lg:items-start">
+      <div class="flex form-control w-full items-center lg:items-start">
+        <label class="label">
+          <span class="label-text text-lg"> Curriculum Title </span>
+        </label>
+        <input
+          formControlName="title"
+          type="text"
+          placeholder="Title"
+          class="input input-lg input-bordered w-full" />
+      </div>
+      <div class="flex form-control w-full items-center lg:items-start">
+        <label class="label">
+          <span class="label-text text-lg">Curriculum Description</span>
+        </label>
+        <textarea
+          formControlName="description"
+          class="textarea textarea-lg textarea-bordered h-60 min-w-full"
+          placeholder="Learning Outcomes..."></textarea>
+      </div>
+      <div class="flex w-full">
+        <button
+          class="btn btn-primary w-full mt-5 mx-auto"
+          (click)="onSubmitUpdateCurriculum()">
+          Submit
+        </button>
+      </div>
     </div>
-    <div class="form-control w-full max-w-lg">
-      <label class="label">
-        <span class="label-text text-lg"> Curriculum Title </span>
-      </label>
-      <input
-        type="text"
-        placeholder="Type here"
-        class="input input-lg input-bordered w-full max-w-md" />
-    </div>
-    <div class="form-control w-full max-w-md">
-      <label class="label">
-        <span class="label-text text-lg">Curriculum Description</span>
-      </label>
-      <textarea
-        class="textarea textarea-lg textarea-bordered h-40"
-        placeholder="Bio"></textarea>
+    <div class="flex gap-4 bg-base-100 p-4 rounded-lg flex-col">
+      <div class="flex mx-auto text-2xl font-bold">
+        SELECT ALL SUBJECTS INCLUDED IN THIS CURRICULUM
+      </div>
+      <ng-container *ngFor="let year of years$ | async">
+        <div class="divider font-bold">Year {{ year }}</div>
+        <ng-container *ngFor="let term of terms$ | async">
+          <div class="flex flex-col bg-base-200 p-5 rounded-lg">
+            <div class="flex flex-row justify-between">
+              <div class="flex font-bold text-sm">Term {{ term }}</div>
+            </div>
+            <div class="flex flex-row flex-wrap">
+              <ng-container *ngFor="let subject of subjects$ | async">
+                <ng-container
+                  *ngIf="subject.term === term && subject.year_level === year">
+                  <div class="flex mr-4">
+                    <div class="form-control max-w-xs">
+                      <label class="cursor-pointer label space-x-2">
+                        <input
+                          type="checkbox"
+                          class="checkbox checkbox-success"
+                          (change)="
+                            onCheckboxChange({
+                              event: $event,
+                              subject: subject,
+                            })
+                          "
+                          [checked]="checkIfChecked(subject)" />
+                        <div class="flex flex-col">
+                          <span class="label-text font-semibold">{{
+                            subject.code
+                          }}</span>
+                          <span class="label-text-alt">{{
+                            subject.title
+                          }}</span>
+                        </div>
+                      </label>
+                    </div>
+                  </div>
+                </ng-container>
+              </ng-container>
+            </div>
+          </div>
+        </ng-container>
+      </ng-container>
     </div>
   </form>
+</div>
+
+<!-- DELETE MODAL -->
+<input type="checkbox" id="delete-modal" class="modal-toggle" />
+<div
+  class="modal cursor-pointer"
+  [ngClass]="{ 'modal-open': deleteCurriculumModalState }">
+  <div class="modal-box" for="">
+    <h3 class="font-bold text-lg">Delete Department</h3>
+    <p class="py-4">Are you sure you want to delete this record?</p>
+    <div class="modal-action">
+      <label class="btn" (click)="onSubmitDeleteCurriculum()">CONFIRM</label>
+      <label class="btn btn-outline" (click)="closeDeleteCurriculumModal()"
+        >CANCEL</label
+      >
+    </div>
+  </div>
 </div>

@@ -94,8 +94,8 @@ const routes: Routes = [
               ).then(c => c.CurriculumManagementComponent),
           },
           {
-            path: 'curriculum-management/create',
-            title: 'Create Curriculum Plan',
+            path: 'curriculum-management/:id',
+            title: 'Customize Curriculum Plan',
             loadComponent: () =>
               import(
                 './curriculum-customize-page/curriculum-customize-page.component'

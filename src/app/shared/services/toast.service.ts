@@ -15,7 +15,7 @@ export class ToastService {
 
   showToast(message: string, success: boolean) {
     this.toast$.next({ open: true, success, message });
-    new Promise(resolve => setTimeout(resolve, 3000)).then(() => {
+    new Promise(resolve => setTimeout(resolve, 1000)).then(() => {
       this.toast$.next(null);
     });
   }

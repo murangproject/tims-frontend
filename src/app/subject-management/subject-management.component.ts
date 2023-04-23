@@ -7,7 +7,7 @@ import {
   UntypedFormBuilder,
   Validators,
 } from '@angular/forms';
-import { tap } from 'rxjs';
+import { Subject, map, of, shareReplay, switchMap, tap } from 'rxjs';
 
 @Component({
   selector: 'app-subject-management',
@@ -16,20 +16,70 @@ import { tap } from 'rxjs';
   templateUrl: './subject-management.component.html',
 })
 export class SubjectManagementComponent implements OnInit {
-  subjects$ = this.subjectService.getSubjects();
+  subjects$ = this.subjectService
+    .getSubjects()
+    .pipe(shareReplay({ bufferSize: 1, refCount: true }));
+
+  selectedSubject$ = this.subjects$.pipe(
+    map(subjects =>
+      subjects.filter(subject => subject.code !== this.selectedCode)
+    )
+  );
+
+  prerequisites$ = this.subjects$.pipe(
+    switchMap(subjects => of(subjects.find(s => s.code === this.selectedCode))),
+    switchMap(subject =>
+      this.selectedSubject$.pipe(
+        map(subjects =>
+          subjects.filter(s =>
+            s.year_level && s.term && subject?.year_level && subject?.term
+              ? subject?.year_level === s.year_level
+                ? s.term < subject?.term
+                  ? true
+                  : false
+                : s.year_level < subject?.year_level
+                ? true
+                : false
+              : false
+          )
+        )
+      )
+    ),
+    tap(subjects => console.log(subjects))
+  );
+
+  corequisites$ = this.subjects$.pipe(
+    switchMap(subjects => of(subjects.find(s => s.code === this.selectedCode))),
+    switchMap(subject =>
+      this.selectedSubject$.pipe(
+        map(subjects =>
+          subjects.filter(
+            s =>
+              s.year_level === subject?.year_level && s.term === subject?.term
+          )
+        )
+      )
+    ),
+    tap(subjects => console.log(subjects))
+  );
 
   subjectForm: any = {
     code: '',
     title: '',
-    lab_unit: '',
-    lec_unit: '',
     description: '',
+    units: '',
+    hours: '',
+    year_level: '',
+    term: '',
+    syllabus: '',
+    prerequisite_code: '',
+    corequisite_code: '',
   };
 
   createSubjectModalState: boolean = false;
   updateSubjectModalState: boolean = false;
   deleteSubjectModalState: boolean = false;
-  selectedId: number = -1;
+  selectedCode: string = '';
 
   // Toast
   toastModalState: boolean = false;
@@ -45,22 +95,25 @@ export class SubjectManagementComponent implements OnInit {
     this.subjectForm = this.formBuilder.group({
       code: ['', [Validators.required]],
       title: ['', [Validators.required]],
-      lab_unit: [
-        '',
-        [Validators.required, Validators.min(0), Validators.max(5)],
-      ],
-      lec_unit: [
-        '',
-        [Validators.required, Validators.min(0), Validators.max(5)],
-      ],
       description: [''],
+      units: ['', [Validators.required, Validators.min(0), Validators.max(5)]],
+      hours: ['', [Validators.required, Validators.min(0), Validators.max(12)]],
+      year_level: [
+        '',
+        [Validators.required, Validators.min(1), Validators.max(10)],
+      ],
+      term: ['', [Validators.required, Validators.min(1), Validators.max(4)]],
+      syllabus: [''],
+      prerequisite_code: [''],
+      corequisite_code: [''],
     });
 
     this.subjectService.init();
   }
 
-  selectSubject(id: number) {
-    this.selectedId = id;
+  selectSubject(code: string) {
+    this.selectedCode = code;
+    this.subjectService.init();
   }
 
   openCreateSubjectModal() {
@@ -71,7 +124,7 @@ export class SubjectManagementComponent implements OnInit {
   closeCreateSubjectModal() {
     this.createSubjectModalState = false;
     this.subjectForm.reset();
-    this.selectSubject(-1);
+    this.selectSubject('');
   }
 
   openUpdateSubjectModal() {
@@ -80,7 +133,7 @@ export class SubjectManagementComponent implements OnInit {
       .pipe(
         tap(subjects => {
           this.subjectForm.patchValue(
-            subjects.find(subject => subject.id === this.selectedId)
+            subjects.find(subject => subject.code === this.selectedCode)
           );
         })
       )
@@ -90,7 +143,7 @@ export class SubjectManagementComponent implements OnInit {
   closeUpdateSubjectModal() {
     this.updateSubjectModalState = false;
     this.subjectForm.reset();
-    this.selectSubject(-1);
+    this.selectSubject('');
   }
 
   openDeleteSubjectModal() {
@@ -100,11 +153,11 @@ export class SubjectManagementComponent implements OnInit {
   closeDeleteSubjectModal() {
     this.deleteSubjectModalState = false;
     this.subjectForm.reset();
-    this.selectSubject(-1);
+    this.selectSubject('');
   }
 
   onSubmitDeleteSubject() {
-    this.subjectService.delete(this.selectedId).subscribe({
+    this.subjectService.delete(this.selectedCode).subscribe({
       next: res => {
         this.subjectService.init();
         this.toastUtil('Delete subject is successful', true);
@@ -121,12 +174,10 @@ export class SubjectManagementComponent implements OnInit {
   onSubmitCreateSubject() {
     this.subjectService.create(this.subjectForm.getRawValue()).subscribe({
       next: res => {
-        this.subjectService.init();
         this.toastUtil('Create subject is successful', true);
         this.closeCreateSubjectModal();
       },
       error: err => {
-        this.subjectService.init();
         this.toastUtil('Create subject failed', false);
         this.closeCreateSubjectModal();
       },
@@ -135,15 +186,13 @@ export class SubjectManagementComponent implements OnInit {
 
   onSubmitUpdateSubject() {
     this.subjectService
-      .update(this.selectedId, this.subjectForm.value)
+      .update(this.selectedCode, this.subjectForm.value)
       .subscribe({
         next: res => {
-          this.subjectService.init();
           this.toastUtil('Update subject is successful', true);
           this.closeUpdateSubjectModal();
         },
         error: err => {
-          this.subjectService.init();
           this.toastUtil('Update subject failed', false);
           this.closeUpdateSubjectModal();
         },
