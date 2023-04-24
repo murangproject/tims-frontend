@@ -21,7 +21,7 @@
     class="flex flex-col lg:flex-row items-center lg:items-start p-5 gap-4"
     [formGroup]="form">
     <div
-      class="flex flex-col lg:mr-4 min-w-[500px] items-center justify-center lg:justify-start lg:items-start">
+      class="flex flex-col lg:mr-4 flex-1 w-full items-center justify-center lg:justify-start lg:items-start">
       <div class="flex form-control w-full items-center lg:items-start">
         <label class="label">
           <span class="label-text text-lg"> Curriculum Title </span>
@@ -49,7 +49,7 @@
         </button>
       </div>
     </div>
-    <div class="flex gap-4 bg-base-100 p-4 rounded-lg flex-col">
+    <div class="flex flex-2 gap-4 bg-base-100 p-4 rounded-lg flex-col">
       <div class="flex mx-auto text-2xl font-bold">
         SELECT ALL SUBJECTS INCLUDED IN THIS CURRICULUM
       </div>
@@ -59,6 +59,7 @@
           <div class="flex flex-col bg-base-200 p-5 rounded-lg">
             <div class="flex flex-row justify-between">
               <div class="flex font-bold text-sm">Term {{ term }}</div>
+              <div class="flex font-bold text-sm"></div>
             </div>
             <div class="flex flex-row flex-wrap">
               <ng-container *ngFor="let subject of subjects$ | async">

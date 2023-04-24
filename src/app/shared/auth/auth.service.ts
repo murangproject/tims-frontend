@@ -6,8 +6,10 @@ import {
   initAccountEndpoint,
   loginEndpoint,
   logoutEndpoint,
+  profileEndpoint,
   tokenValidationEndpoint,
 } from '../utils/api';
+import { User } from 'src/app/user-management/data-access/users.model';
 
 @Injectable({
   providedIn: 'root',
@@ -120,5 +122,20 @@ export class AuthService {
 
   checkInitialization(): boolean {
     return JSON.parse(localStorage.getItem('initialize') ?? 'false') ?? false;
+  }
+
+  getProfile() {
+    const headers = {
+      Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+    };
+
+    return this.http
+      .get<User>(`${profileEndpoint}`, { headers })
+      .pipe(shareReplay({ bufferSize: 1, refCount: true }));
+  }
+
+  checkRole(role: string): boolean {
+    const user = JSON.parse(localStorage.getItem('user') ?? '{}') ?? {};
+    return user.role_type === role;
   }
 }

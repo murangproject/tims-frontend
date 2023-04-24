@@ -1,0 +1,96 @@
+<div class="flex flex-col p-14 gap-4">
+  <div class="flex flex-2 gap-4 bg-base-200 p-8 rounded-lg flex-col">
+    <ng-container *ngFor="let yearTerm of yearTerm$ | async">
+      <div class="overflow-x-auto">
+        <table class="table table-compact w-full">
+          <thead>
+            <tr>
+              <th>Year</th>
+              <th>Term</th>
+              <th>Course Code</th>
+              <th>Course Title</th>
+              <th>Credit Units</th>
+              <th>Hours</th>
+              <th>Prerequisites</th>
+              <th>Co-requisites</th>
+            </tr>
+          </thead>
+          <tbody>
+            <ng-container *ngFor="let subject of subjects$ | async">
+              <ng-container
+                *ngIf="
+                  subject.year_level === yearTerm.year &&
+                  subject.term === yearTerm.term
+                ">
+                <tr>
+                  <th class="border-2">{{ subject.year_level }}</th>
+                  <td class="border-2">{{ subject.term }}</td>
+                  <td class="border-2">{{ subject.code }}</td>
+                  <td class="min-w-[220px] border-2">
+                    {{ subject.title }}
+                  </td>
+                  <td class="border-2">{{ subject.units }}</td>
+                  <td class="border-2">{{ subject.hours }}</td>
+                  <td class="border-2">
+                    {{ subject.prerequisite?.code ?? 'NONE' }}
+                  </td>
+                  <td class="border-2">
+                    {{ subject.corequisite?.code ?? 'NONE' }}
+                  </td>
+                </tr>
+              </ng-container>
+            </ng-container>
+            <tr>
+              <th></th>
+              <td></td>
+              <td></td>
+              <td class="min-w-[220px] text-end font-bold">TOTAL UNITS</td>
+              <td class="border-2">{{ yearTerm.unit }}</td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </ng-container>
+  </div>
+
+  <div class="flex mx-auto">
+    <button class="btn btn-warning btn-wide" (click)="openGiveFeedbackModal()">
+      Give Feedback
+    </button>
+  </div>
+  <div class="flex flex-row flex-wrap gap-8 justify-center">
+    <ng-container *ngIf="curriculum$ | async as curriculum">
+      <ng-container *ngFor="let c of curriculum.comments">
+        <app-feedback-comment [commentInput]="c"></app-feedback-comment>
+      </ng-container>
+    </ng-container>
+  </div>
+</div>
+
+<div class="modal" [ngClass]="{ 'modal-open': giveFeedbackModalState }">
+  <div class="modal-box relative min-w-[700px]">
+    <label
+      for="my-modal-3"
+      class="btn btn-sm btn-circle absolute right-2 top-2"
+      (click)="closeGiveFeedbackModal()"
+      >✕</label
+    >
+    <h3 class="text-lg font-bold">Give your feedback below</h3>
+    <form [formGroup]="form">
+      <div class="flex flex-col gap-2">
+        <div class="form-control">
+          <textarea
+            formControlName="content"
+            class="textarea textarea-bordered"
+            placeholder="Feedback..."></textarea>
+        </div>
+        <button class="btn btn-neutral" (click)="onSubmitGiveFeedbackModal()">
+          Submit
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

@@ -95,11 +95,27 @@ const routes: Routes = [
           },
           {
             path: 'curriculum-management/:id',
-            title: 'Customize Curriculum Plan',
+            title: 'Edit Curriculum',
             loadComponent: () =>
               import(
                 './curriculum-customize-page/curriculum-customize-page.component'
               ).then(c => c.CurriculumCustomizePageComponent),
+          },
+          {
+            path: 'feedbacks',
+            title: 'Feedbacks',
+            loadComponent: () =>
+              import('./feedback/feedback.component').then(
+                c => c.FeedbackComponent
+              ),
+          },
+          {
+            path: 'feedbacks/:id',
+            title: 'Feedbacks',
+            loadComponent: () =>
+              import('./feedback-page/feedback-page.component').then(
+                c => c.FeedbackPageComponent
+              ),
           },
           {
             path: 'settings',
@@ -111,6 +127,7 @@ const routes: Routes = [
           },
         ],
       },
+
       {
         path: '**',
         redirectTo: 'login',

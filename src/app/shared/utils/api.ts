@@ -8,6 +8,7 @@ const tokenValidationEndpoint = `${baseUrl}/api/validate-token`;
 
 // User CRUD
 const userEndpoint = `${baseUrl}/api/users`;
+const profileEndpoint = `${baseUrl}/api/user`;
 
 // Department CRUD
 const departmentEndpoint = `${baseUrl}/api/departments`;
@@ -24,6 +25,9 @@ const subjectEndpoint = `${baseUrl}/api/subjects`;
 // Curriculum CRUD
 const curriculumEndpoint = `${baseUrl}/api/curriculums`;
 
+// Comment CRUD
+const commentEndpoint = `${baseUrl}/api/comments`;
+
 export {
   loginEndpoint,
   logoutEndpoint,
@@ -35,4 +39,6 @@ export {
   termEndpoint,
   subjectEndpoint,
   curriculumEndpoint,
+  profileEndpoint,
+  commentEndpoint
 };
