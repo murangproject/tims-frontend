@@ -32,10 +32,11 @@ import { ToastService } from '../shared/services/toast.service';
 })
 export class FeedbackPageComponent implements OnInit {
   departments$ = this.departmentService.getDepartments();
-  subjects$: Observable<Subject[] | undefined> = this.curriculumService
+  subjects$: Observable<Subject[]> = this.curriculumService
     .getCurriculums()
     .pipe(
-      switchMap(curriculums => curriculums.map(c => c.subjects)),
+      map(curriculums => curriculums.find(c => c.id === this.curriculum_id)),
+      map(curriculum => curriculum?.subjects),
       switchMap(subjects =>
         this.subjectService
           .getSubjects()
@@ -43,7 +44,8 @@ export class FeedbackPageComponent implements OnInit {
             map(allSubjects =>
               allSubjects.filter((s: Subject) =>
                 subjects
-                  ? subjects.findIndex((ss: Subject) => ss.code === s.code) > -1
+                  ? subjects.findIndex((sub: Subject) => sub.code === s.code) >
+                    -1
                   : false
               )
             )
@@ -52,7 +54,8 @@ export class FeedbackPageComponent implements OnInit {
       map(subjects => subjects?.sort((a, b) => (a.term ?? 0) - (b.term ?? 0))),
       map(subjects =>
         subjects?.sort((a, b) => (a.year_level ?? 0) - (b.year_level ?? 0))
-      )
+      ),
+      tap(subjects => console.log(subjects))
     );
 
   yearTerm$ = this.subjects$.pipe(
@@ -84,7 +87,8 @@ export class FeedbackPageComponent implements OnInit {
           ) === index
         );
       });
-    })
+    }),
+    tap(terms => console.log(terms))
   );
 
   giveFeedbackModalState = false;
@@ -137,7 +141,8 @@ export class FeedbackPageComponent implements OnInit {
           map(curriculums => {
             const curriculum = curriculums.find(c => c.id === parseInt(id));
             return curriculum;
-          })
+          }),
+          tap(curriculum => console.log(curriculum))
         );
       }
     });
