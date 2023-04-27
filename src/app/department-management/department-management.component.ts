@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { map, tap } from 'rxjs';
+import { tap } from 'rxjs';
 import { DepartmentService } from './data-access/department.service';
 import {
   FormsModule,
@@ -8,6 +8,7 @@ import {
   UntypedFormBuilder,
   Validators,
 } from '@angular/forms';
+import { ToastService } from '../shared/services/toast.service';
 
 @Component({
   selector: 'app-department-management',
@@ -28,11 +29,6 @@ export class DepartmentManagementComponent implements OnInit {
 
   selectedId: number = -1;
 
-  // toast
-  toastModalState: boolean = false;
-  toastColor: boolean = false;
-  toastMessage: string = '';
-
   form: any = {
     code: '',
     name: '',
@@ -41,7 +37,8 @@ export class DepartmentManagementComponent implements OnInit {
 
   constructor(
     private departmentService: DepartmentService,
-    private formBuilder: UntypedFormBuilder
+    private formBuilder: UntypedFormBuilder,
+    private toastService: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -91,12 +88,12 @@ export class DepartmentManagementComponent implements OnInit {
 
     this.departmentService.create(this.form.value).subscribe({
       next: () => {
-        this.toastUtil('Department created successfully', true);
+        this.toastService.showToast('Department created successfully', true);
         this.departmentService.init();
         this.closeCreateDepartmentModal();
       },
       error: () => {
-        this.toastUtil('Department creation failed', false);
+        this.toastService.showToast('Department creation failed', false);
         this.departmentService.init();
         this.closeCreateDepartmentModal();
       },
@@ -110,12 +107,12 @@ export class DepartmentManagementComponent implements OnInit {
 
     this.departmentService.update(this.selectedId, this.form.value).subscribe({
       next: () => {
-        this.toastUtil('Department updated successfully', true);
+        this.toastService.showToast('Department updated successfully', true);
         this.departmentService.init();
         this.closeUpdateDepartmentModal();
       },
       error: () => {
-        this.toastUtil('Department update failed', false);
+        this.toastService.showToast('Department update failed', false);
         this.departmentService.init();
         this.closeUpdateDepartmentModal();
       },
@@ -134,12 +131,12 @@ export class DepartmentManagementComponent implements OnInit {
   submitDeleteDepartment() {
     this.departmentService.delete(this.selectedId).subscribe({
       next: () => {
-        this.toastUtil('Department deleted successfully', true);
+        this.toastService.showToast('Department deleted successfully', true);
         this.departmentService.init();
         this.closeDeleteDepartmentModal();
       },
       error: () => {
-        this.toastUtil('Department deletion failed', false);
+        this.toastService.showToast('Department deletion failed', false);
         this.departmentService.init();
         this.closeDeleteDepartmentModal();
       },
@@ -153,23 +150,13 @@ export class DepartmentManagementComponent implements OnInit {
   restore() {
     this.departmentService.restore(this.selectedId).subscribe({
       next: () => {
-        this.toastUtil('Department restored successfully', true);
+        this.toastService.showToast('Department restored successfully', true);
         this.departmentService.init();
       },
       error: () => {
-        this.toastUtil('Department restoration failed', false);
+        this.toastService.showToast('Department restoration failed', false);
         this.departmentService.init();
       },
-    });
-  }
-
-  toastUtil(message: string, success: boolean) {
-    this.toastModalState = true;
-    this.toastColor = success;
-    this.toastMessage = message;
-    new Promise(resolve => setTimeout(resolve, 4000)).then(() => {
-      this.toastModalState = false;
-      this.toastMessage = '';
     });
   }
 }

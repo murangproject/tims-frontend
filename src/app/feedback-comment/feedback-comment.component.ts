@@ -17,8 +17,9 @@ export class FeedbackCommentComponent implements OnInit {
   fullname: string = '';
   date: string = '';
   content: string = '';
+  role: string = '';
+  roleType: string = '';
   ngOnInit(): void {
-    console.log(this.commentInput);
     const comment = this.commentInput;
     this.cardComment = comment;
     this.fullname = `${comment.user?.first_name} ${comment.user?.last_name}`;
@@ -28,5 +29,23 @@ export class FeedbackCommentComponent implements OnInit {
       year: 'numeric',
     });
     this.content = comment.content ?? '';
+    this.role = comment.user?.role_name ?? '';
+    this.roleType = comment.user?.role_type ?? '';
+  }
+
+  getBadgeColor(roleType: string) {
+    console.log(roleType);
+    switch (roleType) {
+      case 'admin':
+        return 'badge-accent text-accent-content';
+      case 'committee_chair':
+        return 'badge-success text-success-content';
+      case 'committee_member':
+        return 'badge-info text-info-content';
+      case 'stakeholder':
+        return 'badge-warning text-warning-content';
+      default:
+        return 'badge-accent text-accent-content';
+    }
   }
 }

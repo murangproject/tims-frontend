@@ -1,0 +1,29 @@
+<div class="flex flex-col p-14 h-full bg-base-300">
+<div class="flex gap-8 flex-wrap flex-row h-full">
+    <app-curriculum-card *ngFor="let curriculum of curriculums$ | async">
+      <div class="flex flex-col w-full p-8 gap-2">
+        <div class="flex flex-row">
+          <div class="flex flex-row items-start gap-4 w-full">
+            <div class="flex">
+              <h1 class="text-2xl font-bold break-all line-clamp-3">
+                {{ curriculum.title }}
+              </h1>
+            </div>
+            <div class="min-w-[120px] text-xs ml-auto flex badge badge-xs font-semibold p-2 mt-1" [ngClass]="getBadgeStatusColor(curriculum.status)">
+              {{ getStatusText(curriculum.status) }}
+            </div>
+          </div>
+        </div>
+        <div class="flex" *ngIf="curriculum.description">
+          <p class="text-base line-clamp-5">Description: {{ curriculum.description }}</p>
+        </div>
+        <div class="flex justify-center mt-auto gap-2">
+          <button class="btn btn-accent rounded-2xl text-accent-content"
+            (click)="onViewCurriculum(curriculum?.id ?? -1)">
+            View
+          </button>
+        </div>
+      </div>
+    </app-curriculum-card>
+  </div>
+</div>

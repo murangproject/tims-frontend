@@ -20,15 +20,12 @@ export class FeedbackComponent implements OnInit {
     .getCurriculums()
     .pipe(
       map((curriculums: Curriculum[]) =>
-        curriculums.filter(cur =>
-          cur ? cur.department?.name.includes(this.filter) : false
-        )
+        curriculums.filter(cur => cur.status === 'review')
       )
     );
 
-  filter: string = '';
-
-  createCurriculumModalState: boolean = false;
+  role = localStorage.getItem('role') ?? '';
+  buttonText = this.role === 'stakeholder' ? 'Review' : 'Give Feedback';
 
   constructor(
     private departmentService: DepartmentService,
@@ -42,6 +39,9 @@ export class FeedbackComponent implements OnInit {
   }
 
   giveFeedback(curriculum: Curriculum) {
-    this.router.navigate([`admin/feedbacks/${curriculum.id}`]);
+    const role = localStorage.getItem('role') ?? '';
+    if (role === 'stakeholder')
+      this.router.navigate([`curriculums/${curriculum.id}`]);
+    else this.router.navigate([`admin/curriculums/${curriculum.id}`]);
   }
 }

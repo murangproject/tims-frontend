@@ -1,1 +1,74 @@
-<p>dashboard works!</p>
+<div class="flex flex-col h-full w-full p-12 gap-5">
+  <div class="flex flex-row gap-5">
+    <div class="flex">
+      <div class="avatar placeholder border-4 ring ring-base-content border-white rounded-full shadow-lg">
+        <div class="bg-neutral-focus text-neutral-content rounded-full w-24">
+          <span class="text-3xl">{{ firstLetter }}</span>
+        </div>
+      </div>
+    </div>
+    <div class="flex stats shadow-lg">
+      <div class="stat text-center">
+        <div class="stat-figure text-secondary">
+        </div>
+        <div class="stat-title">Total Users</div>
+        <div class="stat-value">{{ totalUsers }}</div>
+      </div>
+
+      <div class="stat text-center">
+        <div class="stat-title">Active Users</div>
+        <div class="stat-value">{{ totalActiveUsers }}</div>
+      </div>
+
+      <div class="stat text-center">
+        <div class="stat-title">Invited Users</div>
+        <div class="stat-value">{{ totalInvitedUsers }}</div>
+      </div>
+    </div>
+
+    <div class="flex stats shadow-lg">
+      <div class="stat text-center">
+        <div class="stat-figure text-secondary">
+        </div>
+        <div class="stat-title">Total Subjects</div>
+        <div class="stat-value">{{ totalSubjects }}</div>
+      </div>
+
+      <div class="stat text-center">
+        <div class="stat-title">Total Departments</div>
+        <div class="stat-value">{{ totalDepartments }}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex flex-row gap-5">
+    <div class="flex stats shadow-lg">
+      <div class="stat text-center">
+        <div class="stat-title">Total Curriculums</div>
+        <div class="stat-value">{{ totalCurriculum }}</div>
+      </div>
+
+      <div class="stat text-center">
+        <div class="stat-title">Draft Curriculums</div>
+        <div class="stat-value">{{ drafts }}</div>
+      </div>
+
+      <div class="stat text-center">
+        <div class="stat-title">Under Review Curriculums</div>
+        <div class="stat-value">{{ review }}</div>
+      </div>
+
+      <div class="stat text-center">
+        <div class="stat-title">Approved Curriculums</div>
+        <div class="stat-value">{{ approved }}</div>
+      </div>
+
+      <div class="stat text-center">
+        <div class="stat-title">Rejected Curriculums</div>
+        <div class="stat-value">{{ rejected }}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex w-[700px] h-[500px] shadow-lg rounded-lg bg-base-100"></div>
+</div>

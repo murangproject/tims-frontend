@@ -1,0 +1,65 @@
+<div class="flex flex-col p-14 gap-4 h-full bg-base-300">
+  <div class="flex flex-col justify-center">
+    <h1 class="text-4xl font-bold text-center">
+      {{ (curriculum$ | async)?.department?.name }}
+    </h1>
+    <h1 class="text-2xl font-bold text-center">
+      {{ (curriculum$ | async)?.title }}
+    </h1>
+  </div>
+  <div class="flex flex-2 gap-4 bg-base-100 shadow-lg p-8 rounded-lg flex-col">
+    <ng-container *ngFor="let yearTerm of yearTerm$ | async">
+      <div class="overflow-x-hidden">
+        <table class="table table-compact w-full">
+          <thead>
+            <tr>
+              <th>Year</th>
+              <th>Term</th>
+              <th>Course Code</th>
+              <th>Course Title</th>
+              <th>Credit Units</th>
+              <th>Hours</th>
+              <th>Prerequisites</th>
+              <th>Co-requisites</th>
+            </tr>
+          </thead>
+          <tbody>
+            <ng-container *ngFor="let subject of subjects$ | async">
+              <ng-container *ngIf="
+                  subject.year_level === yearTerm.year &&
+                  subject.term === yearTerm.term
+                ">
+                <tr>
+                  <td class="border-2 border-base-300">{{ subject.year_level }}</td>
+                  <td class="border-2 border-base-300">{{ subject.term }}</td>
+                  <td class="border-2 border-base-300">{{ subject.code }}</td>
+                  <td class="min-w-[250px] border-2 border-base-300">
+                    {{ subject.title }}
+                  </td>
+                  <td class="border-2 border-base-300">{{ subject.units }}</td>
+                  <td class="border-2 border-base-300">{{ subject.hours }}</td>
+                  <td class="border-2 border-base-300">
+                    {{ subject.prerequisite?.code ?? 'NONE' }}
+                  </td>
+                  <td class="border-2 border-base-300">
+                    {{ subject.corequisite?.code ?? 'NONE' }}
+                  </td>
+                </tr>
+              </ng-container>
+            </ng-container>
+            <tr>
+              <th></th>
+              <td></td>
+              <td></td>
+              <td class="font-bold min-w-[250px] text-end border-base-300">TOTAL</td>
+              <td class="border-2 border-base-300 font-bold">{{ yearTerm.unit }}</td>
+              <td class="border-2 border-base-300 font-bold">{{ yearTerm.hour }}</td>
+              <td></td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </ng-container>
+  </div>
+</div>

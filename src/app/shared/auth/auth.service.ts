@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { catchError, map, share, shareReplay, tap } from 'rxjs/operators';
 import {
+  checkRoleEndpoint,
   initAccountEndpoint,
   loginEndpoint,
   logoutEndpoint,
@@ -26,7 +27,7 @@ export class AuthService {
     const loginPayload = { email, password };
 
     return this.http
-      .post<{ token: string; initialize: boolean }>(
+      .post<{ user: User; token: string; initialize: boolean }>(
         `${loginEndpoint}`,
         loginPayload
       )
@@ -37,6 +38,8 @@ export class AuthService {
             response.initialize?.toString() ?? 'false'
           );
           localStorage.setItem('authToken', response.token);
+          localStorage.setItem('role', response.user.role_type ?? '');
+          localStorage.setItem('fullName', `${response.user.first_name} ${response.user.last_name}`)
           this.isAuthenticated.next(true);
         }),
         shareReplay({ bufferSize: 1, refCount: true })
@@ -50,6 +53,8 @@ export class AuthService {
 
     localStorage.removeItem('initialize');
     localStorage.removeItem('authToken');
+    localStorage.removeItem('role');
+    localStorage.removeItem('fullName');
 
     this.http.post(`${logoutEndpoint}`, {}, { headers }).subscribe(() => {
       localStorage.removeItem('initialize');
@@ -134,8 +139,7 @@ export class AuthService {
       .pipe(shareReplay({ bufferSize: 1, refCount: true }));
   }
 
-  checkRole(role: string): boolean {
-    const user = JSON.parse(localStorage.getItem('user') ?? '{}') ?? {};
-    return user.role_type === role;
+  checkRole(role: string[]): boolean {
+    return role.includes(localStorage.getItem('role') ?? '');
   }
 }

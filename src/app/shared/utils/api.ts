@@ -1,10 +1,11 @@
-const baseUrl = 'https://curriculum-backend.server.redenvalerio.com';
+const baseUrl = 'http://localhost:8000';
 
 // Auth
 const loginEndpoint = `${baseUrl}/api/login`;
 const logoutEndpoint = `${baseUrl}/api/logout`;
 const initAccountEndpoint = `${baseUrl}/api/init`;
 const tokenValidationEndpoint = `${baseUrl}/api/validate-token`;
+const checkRoleEndpoint = `${baseUrl}/api/check-role`;
 
 // User CRUD
 const userEndpoint = `${baseUrl}/api/users`;
@@ -33,6 +34,7 @@ export {
   logoutEndpoint,
   initAccountEndpoint,
   tokenValidationEndpoint,
+  checkRoleEndpoint,
   userEndpoint,
   departmentEndpoint,
   academicYearEndpoint,
@@ -40,5 +42,5 @@ export {
   subjectEndpoint,
   curriculumEndpoint,
   profileEndpoint,
-  commentEndpoint
+  commentEndpoint,
 };

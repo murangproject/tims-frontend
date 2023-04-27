@@ -1,4 +1,4 @@
-<div class="flex flex-col">
+<div class="flex flex-col m-5">
   <div class="flex items-center">
     <div class="flex tabs ml-5">
       <a
@@ -20,11 +20,12 @@
       >
     </div>
   </div>
-  <div class="flex overflow-x-auto w-full h-full p-5">
+  <div class="flex overflow-x-auto w-full h-full p-5 shadow-lg bg-base-100 rounded-lg">
     <ng-container *ngIf="tab === 'active'">
-      <table class="table table-compact w-full text-lg">
+      <table class="table table-compact w-full text-lg border-2 border-base-300">
         <thead>
           <tr>
+            <th></th>
             <th>Code</th>
             <th>Department</th>
             <th>Description</th>
@@ -33,9 +34,10 @@
         </thead>
         <tbody>
           <tr *ngFor="let department of departments$ | async">
-            <td class="text-xl">{{ department.code }}</td>
-            <td class="text-xl">{{ department.name }}</td>
-            <td class="text-xl">{{ department.description }}</td>
+            <td></td>
+            <td class="text-base">{{ department.code }}</td>
+            <td class="text-base">{{ department.name }}</td>
+            <td class="text-base">{{ department.description }}</td>
             <td class="space-x-4 justify-center items-center text-center">
               <button
                 class="btn btn-secondary bg-secondary text-secondary-content"
@@ -54,9 +56,10 @@
     </ng-container>
 
     <ng-container *ngIf="tab === 'archive'">
-      <table class="table table-compact w-full text-lg">
+      <table class="table table-compact w-full text-lg border-2 border-base-300">
         <thead>
           <tr>
+            <th></th>
             <th>Code</th>
             <th>Department</th>
             <th>Description</th>
@@ -65,9 +68,10 @@
         </thead>
         <tbody>
           <tr *ngFor="let department of archives$ | async">
-            <td class="text-xl">{{ department.code }}</td>
-            <td class="text-xl">{{ department.name }}</td>
-            <td class="text-xl">{{ department.description }}</td>
+            <td></td>
+            <td class="text-base">{{ department.code }}</td>
+            <td class="text-base">{{ department.name }}</td>
+            <td class="text-base">{{ department.description }}</td>
             <td class="space-x-4 justify-center items-center text-center">
               <button
                 class="btn btn-secondary bg-secondary text-secondary-content"
@@ -189,17 +193,4 @@
       >
     </div>
   </div>
-</div>
-
-<!--  TOAST -->
-<div class="toast toast-end">
-  <ng-container *ngIf="toastModalState">
-    <div
-      class="alert alert-success"
-      [ngClass]="{ 'alert-success': toastColor, 'alert-error': !toastColor }">
-      <div>
-        <span>{{ toastMessage }}</span>
-      </div>
-    </div>
-  </ng-container>
 </div>

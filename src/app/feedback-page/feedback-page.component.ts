@@ -13,7 +13,10 @@ import { SubjectService } from '../subject-management/data-access/subject.servic
 import { Observable, map, reduce, switchMap, tap } from 'rxjs';
 import { Subject } from '../subject-management/data-access/subject.model';
 import { CurriculumService } from '../curriculum-management/data-access/curriculum.service';
-import { Curriculum } from '../curriculum-management/data-access/curriculum.model';
+import {
+  Curriculum,
+  CurriculumStatus,
+} from '../curriculum-management/data-access/curriculum.model';
 import { AuthService } from '../shared/auth/auth.service';
 import { CommentService } from '../curriculum-management/data-access/ comment.service';
 import { ToastService } from '../shared/services/toast.service';
@@ -54,8 +57,7 @@ export class FeedbackPageComponent implements OnInit {
       map(subjects => subjects?.sort((a, b) => (a.term ?? 0) - (b.term ?? 0))),
       map(subjects =>
         subjects?.sort((a, b) => (a.year_level ?? 0) - (b.year_level ?? 0))
-      ),
-      tap(subjects => console.log(subjects))
+      )
     );
 
   yearTerm$ = this.subjects$.pipe(
@@ -65,6 +67,7 @@ export class FeedbackPageComponent implements OnInit {
           year: s.year_level,
           term: s.term,
           unit: s.units,
+          hour: s.hours,
         };
       })
     ),
@@ -76,6 +79,9 @@ export class FeedbackPageComponent implements OnInit {
           unit: self
             ?.filter(t => t.year === term?.year && t.term === term?.term)
             .reduce((a, b) => a + (b?.unit ?? 0), 0),
+          hour: self
+            ?.filter(t => t.year === term?.year && t.term === term?.term)
+            .reduce((a, b) => a + (b?.hour ?? 0), 0),
         };
       });
     }),
@@ -87,11 +93,14 @@ export class FeedbackPageComponent implements OnInit {
           ) === index
         );
       });
-    }),
-    tap(terms => console.log(terms))
+    })
   );
 
   giveFeedbackModalState = false;
+  approveModalState = false;
+  rejectModalState = false;
+
+  role = localStorage.getItem('role') ?? '';
 
   curriculum$: Observable<Curriculum | undefined> | undefined = undefined;
 
@@ -191,5 +200,53 @@ export class FeedbackPageComponent implements OnInit {
     });
 
     this.closeGiveFeedbackModal();
+  }
+
+  openApproveModal() {
+    this.approveModalState = true;
+  }
+
+  closeApproveModal() {
+    this.approveModalState = false;
+  }
+
+  openRejectModal() {
+    this.rejectModalState = true;
+  }
+
+  closeRejectModal() {
+    this.rejectModalState = false;
+  }
+
+  onSubmitApproveModal() {
+    this.curriculumService
+      .updateStatus(this.curriculum_id, CurriculumStatus.Approved)
+      .subscribe({
+        next: () => {
+          this.toastService.showToast('Curriculum approved!', true);
+          this.curriculumService.init();
+        },
+        error: () => {
+          this.toastService.showToast('Failed to approve curriculum!', false);
+          this.curriculumService.init();
+        },
+      });
+    this.closeApproveModal();
+  }
+
+  onSubmitRejectModal() {
+    this.curriculumService
+      .updateStatus(this.curriculum_id, CurriculumStatus.Rejected)
+      .subscribe({
+        next: () => {
+          this.toastService.showToast('Curriculum rejected!', true);
+          this.curriculumService.init();
+        },
+        error: () => {
+          this.toastService.showToast('Failed to reject curriculum!', false);
+          this.curriculumService.init();
+        },
+      });
+    this.closeRejectModal();
   }
 }

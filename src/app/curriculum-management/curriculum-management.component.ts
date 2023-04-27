@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { CurriculumCardComponent } from '../shared/components/curriculum-card.component';
 import { DepartmentService } from '../department-management/data-access/department.service';
 import { CurriculumService } from './data-access/curriculum.service';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import {
   FormsModule,
   ReactiveFormsModule,
@@ -12,7 +12,7 @@ import {
 } from '@angular/forms';
 import { ToastService } from '../shared/services/toast.service';
 import { map, tap } from 'rxjs';
-import { Curriculum } from './data-access/curriculum.model';
+import { Curriculum, CurriculumStatus } from './data-access/curriculum.model';
 
 @Component({
   selector: 'app-curriculum-management',
@@ -22,6 +22,7 @@ import { Curriculum } from './data-access/curriculum.model';
     CurriculumCardComponent,
     FormsModule,
     ReactiveFormsModule,
+    RouterModule,
   ],
   templateUrl: './curriculum-management.component.html',
 })
@@ -53,7 +54,7 @@ export class CurriculumManagementComponent implements OnInit {
     private router: Router,
     private formBuilder: UntypedFormBuilder,
     private toastService: ToastService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.form = this.formBuilder.group({
@@ -97,7 +98,49 @@ export class CurriculumManagementComponent implements OnInit {
     });
   }
 
+  onEditCurriculum(id: number) {
+    this.router.navigate([`admin/curriculum-management/${id}/edit`]);
+  }
+
   onViewCurriculum(id: number) {
-    this.router.navigate([`admin/curriculum-management/${id}`]);
+    this.router.navigate([`admin/view-curriculums/${id}`]);
+  }
+
+  getBadgeStatusColor(status?: CurriculumStatus) {
+    switch (status) {
+      case 'draft':
+        return 'badge-ghost text-ghost-content';
+      case 'published':
+        return 'badge-info text-info-content';
+      case 'approved':
+        return 'badge-success text-success-content';
+      case 'rejected':
+        return 'badge-error text-error-content';
+      case 'review':
+        return 'badge-warning text-warning-content';
+      default:
+        return 'badge-ghost text-ghost-content';
+    }
+  }
+
+  getStatusText(status?: CurriculumStatus) {
+    switch (status) {
+      case 'draft':
+        return 'Draft';
+      case 'published':
+        return 'Published';
+      case 'approved':
+        return 'Approved';
+      case 'rejected':
+        return 'Rejected';
+      case 'review':
+        return 'Under Review';
+      default:
+        return 'Draft';
+    }
+  }
+
+  getLink(id: number) {
+    return `/print-curriculum/${id}`;
   }
 }

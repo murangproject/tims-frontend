@@ -2,11 +2,13 @@
   <div class="flex">
     <div class="flex flex-row justify-between w-full">
       <div class="flex">
-        <a class="btn btn-ghost" [routerLink]="'/admin/curriculum-management'"
-          >< Back</a
-        >
+        <a class="btn btn-ghost" [routerLink]="'/admin/curriculum-management'">
+          < Back</a>
       </div>
-      <div class="flex">
+      <div class="flex gap-4">
+        <button class="btn btn-warning btn-warning" (click)="openSubmitForReviewCurriculum()">
+          Submit For A Review
+        </button>
         <button class="btn btn-error" (click)="openDeleteCurriculumModal()">
           Delete
         </button>
@@ -14,38 +16,38 @@
     </div>
   </div>
 
-  <p class="label-text text-2xl font-bold my-20">
-    {{ (curriculum$ | async)?.department?.name }}
-  </p>
-  <form
-    class="flex flex-col lg:flex-row items-center lg:items-start p-5 gap-4"
-    [formGroup]="form">
-    <div
-      class="flex flex-col lg:mr-4 flex-1 w-full items-center justify-center lg:justify-start lg:items-start">
+  <ng-container *ngIf="curriculum$ | async as curriculum">
+    <div class="flex flex-row items-center gap-2">
+      <div class="flex">
+        <h1 class="label-text text-2xl font-bold my-20">
+          {{ curriculum?.department?.name }} - {{ curriculum?.title}}
+        </h1>
+      </div>
+      <div class="flex">
+        <div class="badge text-lg font-bold p-4" [ngClass]="getBadgeStatusColor(curriculum?.status)">
+          {{ getStatusText(curriculum?.status) }}
+        </div>
+      </div>
+    </div>
+  </ng-container>
+  <form class="flex flex-col lg:flex-row items-center lg:items-start p-5 gap-4" [formGroup]="form">
+    <div class="flex flex-col lg:mr-4 flex-1 w-full items-center justify-center lg:justify-start lg:items-start">
       <div class="flex form-control w-full items-center lg:items-start">
         <label class="label">
           <span class="label-text text-lg"> Curriculum Title </span>
         </label>
-        <input
-          formControlName="title"
-          type="text"
-          placeholder="Title"
-          class="input input-lg input-bordered w-full" />
+        <input formControlName="title" type="text" placeholder="Title" class="input input-lg input-bordered w-full" />
       </div>
       <div class="flex form-control w-full items-center lg:items-start">
         <label class="label">
           <span class="label-text text-lg">Curriculum Description</span>
         </label>
-        <textarea
-          formControlName="description"
-          class="textarea textarea-lg textarea-bordered h-60 min-w-full"
+        <textarea formControlName="description" class="textarea textarea-lg textarea-bordered h-60 min-w-full"
           placeholder="Learning Outcomes..."></textarea>
       </div>
       <div class="flex w-full">
-        <button
-          class="btn btn-primary w-full mt-5 mx-auto"
-          (click)="onSubmitUpdateCurriculum()">
-          Submit
+        <button class="btn btn-primary w-full mt-5 mx-auto" (click)="onSubmitUpdateCurriculum()">
+          SAVE
         </button>
       </div>
     </div>
@@ -53,7 +55,7 @@
       <div class="flex mx-auto text-2xl font-bold">
         SELECT ALL SUBJECTS INCLUDED IN THIS CURRICULUM
       </div>
-      <ng-container *ngFor="let year of years$ | async">
+      <ng-container *ngFor="let year of year_levels$ | async">
         <div class="divider font-bold">Year {{ year }}</div>
         <ng-container *ngFor="let term of terms$ | async">
           <div class="flex flex-col bg-base-200 p-5 rounded-lg">
@@ -63,28 +65,23 @@
             </div>
             <div class="flex flex-row flex-wrap">
               <ng-container *ngFor="let subject of subjects$ | async">
-                <ng-container
-                  *ngIf="subject.term === term && subject.year_level === year">
+                <ng-container *ngIf="subject.term === term && subject.year_level === year">
                   <div class="flex mr-4">
                     <div class="form-control max-w-xs">
                       <label class="cursor-pointer label space-x-2">
-                        <input
-                          type="checkbox"
-                          class="checkbox checkbox-success"
-                          (change)="
+                        <input type="checkbox" class="checkbox checkbox-success" (change)="
                             onCheckboxChange({
                               event: $event,
                               subject: subject,
                             })
-                          "
-                          [checked]="checkIfChecked(subject)" />
+                          " [checked]="checkIfChecked(subject)" />
                         <div class="flex flex-col">
                           <span class="label-text font-semibold">{{
                             subject.code
-                          }}</span>
+                            }}</span>
                           <span class="label-text-alt">{{
                             subject.title
-                          }}</span>
+                            }}</span>
                         </div>
                       </label>
                     </div>
@@ -99,19 +96,28 @@
   </form>
 </div>
 
+<!-- SUBMIT FOR REVIEW MODAL -->
+<input type="checkbox" id="delete-modal" class="modal-toggle" />
+<div class="modal cursor-pointer" [ngClass]="{ 'modal-open': submitForReviewModalState }">
+  <div class="modal-box" for="">
+    <h3 class="font-bold text-lg">Submit For Review</h3>
+    <p class="py-4">Are you sure you want to submit this for review?</p>
+    <div class="modal-action">
+      <label class="btn" (click)="onSubmitForReviewCurriculum()">SUBMIT</label>
+      <label class="btn btn-outline" (click)="closeSubmitForReviewCurriculum()">CANCEL</label>
+    </div>
+  </div>
+</div>
+
 <!-- DELETE MODAL -->
 <input type="checkbox" id="delete-modal" class="modal-toggle" />
-<div
-  class="modal cursor-pointer"
-  [ngClass]="{ 'modal-open': deleteCurriculumModalState }">
+<div class="modal cursor-pointer" [ngClass]="{ 'modal-open': deleteCurriculumModalState }">
   <div class="modal-box" for="">
-    <h3 class="font-bold text-lg">Delete Department</h3>
+    <h3 class="font-bold text-lg">Delete Curriculum</h3>
     <p class="py-4">Are you sure you want to delete this record?</p>
     <div class="modal-action">
       <label class="btn" (click)="onSubmitDeleteCurriculum()">CONFIRM</label>
-      <label class="btn btn-outline" (click)="closeDeleteCurriculumModal()"
-        >CANCEL</label
-      >
+      <label class="btn btn-outline" (click)="closeDeleteCurriculumModal()">CANCEL</label>
     </div>
   </div>
 </div>

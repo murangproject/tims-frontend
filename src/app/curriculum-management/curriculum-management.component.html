@@ -1,96 +1,83 @@
-<div class="flex flex-col p-14">
+<div class="flex flex-col p-14 h-full bg-base-300">
   <div class="flex mb-8">
     <div class="form-control w-full max-w-lg">
-      <select
-        class="select select-bordered"
-        #filter
-        (change)="filterDepartment(filter.value)">
+      <select class="select select-bordered" #filter (change)="filterDepartment(filter.value)">
         <option disabled selected>Select a department</option>
         <option value="">All</option>
-        <option
-          *ngFor="let department of departments$ | async"
-          [value]="department.name">
+        <option *ngFor="let department of departments$ | async" [value]="department.name">
           {{ department.name }}
         </option>
       </select>
     </div>
   </div>
-  <div class="flex gap-8 flex-wrap flex-row">
+  <div class="flex gap-8 flex-wrap flex-row h-full">
     <app-curriculum-card *ngFor="let curriculum of curriculums$ | async">
       <div class="flex flex-col w-full p-8 gap-2">
         <div class="flex flex-row">
-          <div class="flex">
-            <h1 class="text-2xl font-bold">
-              {{ curriculum.title }}
-            </h1>
+          <div class="flex flex-row items-start gap-4 w-full">
+            <div class="flex">
+              <h1 class="text-2xl font-bold break-all line-clamp-3">
+                {{ curriculum.title }}
+              </h1>
+            </div>
+            <div class="min-w-[120px] text-xs ml-auto flex badge badge-xs font-semibold p-2 mt-1"
+              [ngClass]="getBadgeStatusColor(curriculum.status)">
+              {{ getStatusText(curriculum.status) }}
+            </div>
           </div>
         </div>
         <div class="flex" *ngIf="curriculum.description">
-          <p class="text-base">Description: {{ curriculum.description }}</p>
+          <p class="text-base line-clamp-5">Description: {{ curriculum.description }}</p>
         </div>
-        <div class="flex justify-center mt-auto">
-          <button
-            class="btn btn-accent rounded-2xl"
-            (click)="onViewCurriculum(curriculum?.id ?? -1)">
-            View Curriculum
+        <div class="flex justify-center mt-auto gap-2">
+          <button class="btn btn-warning rounded-2xl text-warning-content"
+            (click)="onEditCurriculum(curriculum?.id ?? -1)">
+            Edit
           </button>
+          <button class="btn btn-accent rounded-2xl text-accent-content"
+            (click)="onViewCurriculum(curriculum?.id ?? -1)">
+            View
+          </button>
+          <div class="tooltip" data-tip="Note: Please adjust the settings such as scaling of the page before printing. It can be found on the right side of the printing property window.">
+            <a class="btn btn-info rounded-2xl text-info-content" [routerLink]="getLink(curriculum?.id ?? -1)"
+              target="_blank">
+              Print
+            </a>
+
+          </div>
         </div>
       </div>
     </app-curriculum-card>
-    <app-curriculum-card
-      [cardMode]="'blueprint'"
-      (buttonClick)="openCreateCurriculumModal()" />
+    <app-curriculum-card [cardMode]="'blueprint'" (buttonClick)="openCreateCurriculumModal()" />
   </div>
 </div>
 
 <!-- CREATE MODAL -->
-<label
-  for="my-modal-4"
-  class="modal modal-bottom sm:modal-middle cursor-pointer"
+<label for="my-modal-4" class="modal modal-bottom sm:modal-middle cursor-pointer"
   [ngClass]="{ 'modal-open': createCurriculumModalState }">
   <label class="modal-box relative" for="">
-    <label
-      for="my-modal-4"
-      (click)="closeCreateCurriculumModal()"
-      class="btn btn-sm btn-circle absolute right-2 top-2"
-      >✕</label
-    >
+    <label for="my-modal-4" (click)="closeCreateCurriculumModal()"
+      class="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
     <div class="flex">
-      <form
-        [formGroup]="form"
-        class="flex h-full w-full items-center justify-center">
-        <div
-          class="flex flex-col rrounded-lg p-20 items-center justify-center gap-8 bg-base-100">
+      <form [formGroup]="form" class="flex h-full w-full items-center justify-center">
+        <div class="flex flex-col rrounded-lg p-20 items-center justify-center gap-8 bg-base-100">
           <h1 class="text-4xl font-bold mb-6">Create New Curriculum</h1>
           <div class="form-control w-full max-w-xs">
             <label class="label">
               <span class="label-text">Curriculum for</span>
             </label>
-            <select
-              class="select select-bordered"
-              formControlName="department_id">
+            <select class="select select-bordered" formControlName="department_id">
               <option disabled selected>Select a department</option>
-              <option
-                *ngFor="let department of departments$ | async"
-                [value]="department.id">
+              <option *ngFor="let department of departments$ | async" [value]="department.id">
                 {{ department.name }}
               </option>
             </select>
           </div>
-          <input
-            type="text"
-            formControlName="title"
-            placeholder="Curriculum Title"
+          <input type="text" formControlName="title" placeholder="Curriculum Title"
             class="input input-bordered input-neutral w-full max-w-xs" />
-          <input
-            type="text"
-            formControlName="description"
-            placeholder="Description"
+          <input type="text" formControlName="description" placeholder="Description"
             class="input input-bordered input-neutral w-full max-w-xs" />
-          <button
-            class="btn w-full max-w-xs"
-            type="submit"
-            (click)="onSubmitCreateCurriculum()">
+          <button class="btn w-full max-w-xs" type="submit" (click)="onSubmitCreateCurriculum()">
             CREATE
           </button>
         </div>

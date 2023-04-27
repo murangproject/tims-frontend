@@ -5,6 +5,7 @@ import {
   Curriculum,
   CreateCurriculumDto,
   UpdateCurriculumDto,
+  CurriculumStatus,
 } from './curriculum.model';
 import { curriculumEndpoint } from 'src/app/shared/utils/api';
 
@@ -40,7 +41,7 @@ export class CurriculumService {
 
     return this.http.post<{ message: string }>(
       `${curriculumEndpoint}`,
-      createCurriculumDto,
+      { ...createCurriculumDto, status: CurriculumStatus.Draft },
       {
         headers,
       }
@@ -65,6 +66,20 @@ export class CurriculumService {
     return this.http.put<{ message: string }>(
       `${curriculumEndpoint}/${id}`,
       updateCurriculumDto,
+      {
+        headers,
+      }
+    );
+  }
+
+  updateStatus(id: number, status: CurriculumStatus) {
+    const headers = {
+      Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+    };
+
+    return this.http.put<{ message: string }>(
+      `${curriculumEndpoint}/${id}/status`,
+      { status },
       {
         headers,
       }

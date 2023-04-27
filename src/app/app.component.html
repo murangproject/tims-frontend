@@ -1,13 +1,13 @@
-<router-outlet></router-outlet>
+<div [attr.data-theme]="theme">
+  <router-outlet></router-outlet>
+</div>
 
 <!--  TOAST -->
 <div class="toast toast-end">
   <ng-container *ngIf="toast$ | async as t">
-    <div
-      class="alert alert-success"
-      [ngClass]="{ 'alert-success': t.success, 'alert-error': !t.success }">
+    <div class="alert alert-success" [ngClass]="{ 'alert-success': t.success, 'alert-error': !t.success }">
       <div>
-        <span>{{ t.message }}</span>
+        <span [ngClass]="{'text-success-content': t.success, 'text-error.content': !t.success}">{{ t.message }}</span>
       </div>
     </div>
   </ng-container>

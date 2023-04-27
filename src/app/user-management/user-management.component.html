@@ -1,4 +1,4 @@
-<div class="flex flex-col p-4">
+<div class="flex flex-col p-4 m-5">
   <div class="flex items-center">
     <div class="flex tabs ml-5">
       <a
@@ -21,13 +21,14 @@
     </div>
   </div>
 
-  <div class="flex flex-col h-full w-full bg-base-200 rounded-lg">
+  <div class="flex flex-col h-full w-full bg-base-100 rounded-lg shadow-lg">
     <!--  ACTIVE USER TABLE -->
     <ng-container *ngIf="tab === 'active'">
       <div class="flex overflow-x-auto w-full h-full p-5">
-        <table class="table table-normal w-full text-lg">
+        <table class="table table-normal w-full border-2 border-base-300">
           <thead>
             <tr>
+              <th></th>
               <th>First Name</th>
               <th>Middle Name</th>
               <th>Last Name</th>
@@ -40,12 +41,13 @@
           <tbody>
             <ng-container *ngIf="(activeUsers$ | async) ? true : false">
               <tr *ngFor="let user of activeUsers$ | async">
-                <td class="text-xl">{{ user.first_name }}</td>
-                <td class="text-xl">{{ user.middle_name }}</td>
-                <td class="text-xl">{{ user.last_name }}</td>
-                <td class="text-xl">{{ user.email }}</td>
-                <td class="text-xl">{{ user.role_name }}</td>
-                <td class="text-xl">{{ getRoleName(user.role_type ?? '') }}</td>
+                <td></td>
+                <td class="text-base">{{ user.first_name }}</td>
+                <td class="text-base">{{ user.middle_name }}</td>
+                <td class="text-base">{{ user.last_name }}</td>
+                <td class="text-base">{{ user.email }}</td>
+                <td class="text-base">{{ user.role_name }}</td>
+                <td class="text-base">{{ getRoleName(user.role_type ?? '') }}</td>
                 <td class="space-x-4 justify-center items-center text-center">
                   <button
                     class="btn btn-secondary bg-secondary text-secondary-content"
@@ -68,10 +70,11 @@
     </ng-container>
     <!-- INVITED -->
     <ng-container *ngIf="tab === 'invited'">
-      <div class="flex overflow-x-auto w-full h-full p-5">
-        <table class="table table-normal w-full text-lg">
+      <div class="flex overflow-x-auto w-full h-full p-5 shadow-lg">
+        <table class="table table-compact w-full shadow-lg border-2 border-base-300">
           <thead>
             <tr>
+              <th></th>
               <th>Email</th>
               <th>Role Name</th>
               <th>Role Type</th>
@@ -80,9 +83,10 @@
           </thead>
           <tbody>
             <tr *ngFor="let user of invitedUsers$ | async">
-              <td class="text-xl">{{ user.email }}</td>
-              <td class="text-xl">{{ user.role_name }}</td>
-              <td class="text-xl">{{ getRoleName(user.role_type ?? '') }}</td>
+              <td></td>
+              <td class="text-base">{{ user.email }}</td>
+              <td class="text-base">{{ user.role_name }}</td>
+              <td class="text-base">{{ getRoleName(user.role_type ?? '') }}</td>
               <td class="space-x-4 justify-center items-center text-center">
                 <button
                   class="btn btn-secondary bg-secondary text-secondary-content"

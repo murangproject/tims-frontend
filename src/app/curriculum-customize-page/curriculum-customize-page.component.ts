@@ -2,7 +2,10 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { DepartmentService } from '../department-management/data-access/department.service';
-import { Curriculum } from '../curriculum-management/data-access/curriculum.model';
+import {
+  Curriculum,
+  CurriculumStatus,
+} from '../curriculum-management/data-access/curriculum.model';
 import { Observable, map, switchMap, take, tap } from 'rxjs';
 import { CurriculumService } from '../curriculum-management/data-access/curriculum.service';
 import { SubjectService } from '../subject-management/data-access/subject.service';
@@ -28,7 +31,7 @@ export class CurriculumCustomizePageComponent implements OnInit {
       subjects.sort((a, b) => (a.year_level ?? 0) - (b.year_level ?? 0))
     )
   );
-  years$ = this.subjects$.pipe(
+  year_levels$ = this.subjects$.pipe(
     map(subjects => [...new Set(subjects.map(s => s.year_level))])
   );
   terms$ = this.subjects$.pipe(
@@ -51,6 +54,7 @@ export class CurriculumCustomizePageComponent implements OnInit {
   currentCurriculumId: number = -1;
 
   deleteCurriculumModalState: boolean = false;
+  submitForReviewModalState: boolean = false;
 
   curriculum$?: Observable<Curriculum | undefined>;
 
@@ -62,7 +66,7 @@ export class CurriculumCustomizePageComponent implements OnInit {
     private router: Router,
     private formBuilder: UntypedFormBuilder,
     private toastService: ToastService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.form = this.formBuilder.group({
@@ -138,6 +142,7 @@ export class CurriculumCustomizePageComponent implements OnInit {
         this.form.patchValue({
           subject_ids: [...this.form.value.subject_ids, prerequisite.code],
         });
+
         this.onCodeChecked({ code: prerequisite.code });
       }
     } else if (
@@ -149,6 +154,7 @@ export class CurriculumCustomizePageComponent implements OnInit {
           (s: string) => s !== subject.code
         ),
       });
+
       this.onCodeUnchecked({ code: subject.code });
     }
   }
@@ -164,9 +170,24 @@ export class CurriculumCustomizePageComponent implements OnInit {
         tap(subject =>
           subject
             ? this.onCheckboxChange({
-                event: { target: { checked: false } },
-                subject,
-              })
+              event: { target: { checked: false } },
+              subject,
+            })
+            : null
+        )
+      )
+      .subscribe();
+
+    this.subjects$
+      .pipe(
+        map(s => s.find(s => s.corequisite?.code === code)),
+        take(1),
+        tap(subject =>
+          subject
+            ? this.onCheckboxChange({
+              event: { target: { checked: false } },
+              subject,
+            })
             : null
         )
       )
@@ -185,21 +206,21 @@ export class CurriculumCustomizePageComponent implements OnInit {
             tap(subject =>
               subject?.corequisite
                 ? this.onCheckboxChange({
-                    event: { target: { checked: true } },
-                    subject: subjects.find(
-                      s => s.code === subject?.corequisite?.code
-                    ),
-                  })
+                  event: { target: { checked: true } },
+                  subject: subjects.find(
+                    s => s.code === subject?.corequisite?.code
+                  ),
+                })
                 : null
             ),
             tap(subject =>
               subject?.prerequisite
                 ? this.onCheckboxChange({
-                    event: { target: { checked: true } },
-                    subject: subjects.find(
-                      s => s.code === subject?.prerequisite?.code
-                    ),
-                  })
+                  event: { target: { checked: true } },
+                  subject: subjects.find(
+                    s => s.code === subject?.prerequisite?.code
+                  ),
+                })
                 : null
             )
           )
@@ -260,5 +281,68 @@ export class CurriculumCustomizePageComponent implements OnInit {
         this.toastService.showToast('Failed to delete curriculum', false);
       },
     });
+  }
+
+  openSubmitForReviewCurriculum() {
+    this.submitForReviewModalState = true;
+  }
+
+  closeSubmitForReviewCurriculum() {
+    this.submitForReviewModalState = false;
+  }
+
+  onSubmitForReviewCurriculum() {
+    this.curriculumService
+      .updateStatus(this.currentCurriculumId ?? -1, CurriculumStatus.Review)
+      .subscribe({
+        next: () => {
+          this.toastService.showToast(
+            'Curriculum submitted for review successfully',
+            true
+          );
+          this.router.navigate(['/admin/curriculum-management']);
+        },
+        error: () => {
+          this.toastService.showToast(
+            'Failed to submit curriculum for review',
+            false
+          );
+          this.router.navigate(['/admin/curriculum-management']);
+        },
+      });
+  }
+
+  getBadgeStatusColor(status?: CurriculumStatus) {
+    switch (status) {
+      case 'draft':
+        return 'badge-ghost text-ghost-content';
+      case 'published':
+        return 'badge-info text-info-content';
+      case 'approved':
+        return 'badge-success text-success-content';
+      case 'rejected':
+        return 'badge-error text-error-content';
+      case 'review':
+        return 'badge-warning text-warning-content';
+      default:
+        return 'badge-ghost text-ghost-content';
+    }
+  }
+
+  getStatusText(status?: CurriculumStatus) {
+    switch (status) {
+      case 'draft':
+        return 'Draft';
+      case 'published':
+        return 'Published';
+      case 'approved':
+        return 'Approved';
+      case 'rejected':
+        return 'Rejected';
+      case 'review':
+        return 'Under Review';
+      default:
+        return 'Draft';
+    }
   }
 }
