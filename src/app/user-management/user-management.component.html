@@ -49,6 +49,7 @@
                 <td class="text-base">{{ user.role_name }}</td>
                 <td class="text-base">{{ getRoleName(user.role_type ?? '') }}</td>
                 <td class="space-x-4 justify-center items-center text-center">
+                  <ng-container *ngIf="user.id !== currentUserId">
                   <button
                     class="btn btn-secondary bg-secondary text-secondary-content"
                     (click)="
@@ -61,6 +62,7 @@
                     (click)="select(user.id ?? -1); openDeleteUserModal()">
                     delete
                   </button>
+                  </ng-container>
                 </td>
               </tr>
             </ng-container>

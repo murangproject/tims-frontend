@@ -6,9 +6,11 @@
           < Back</a>
       </div>
       <div class="flex gap-4">
-        <button class="btn btn-warning btn-warning" (click)="openSubmitForReviewCurriculum()">
-          Submit For A Review
-        </button>
+        <ng-container *ngIf="(curriculum$ | async)?.status !== 'review'">
+          <button class="btn btn-warning btn-warning" (click)="openSubmitForReviewCurriculum()">
+            Submit For A Review
+          </button>
+        </ng-container>
         <button class="btn btn-error" (click)="openDeleteCurriculumModal()">
           Delete
         </button>

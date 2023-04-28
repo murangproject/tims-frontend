@@ -26,14 +26,14 @@
           <td class="text-base">{{ subject.term }}</td>
           <td class="text-base">{{ subject.code }}</td>
           <td class="text-base">
-          <a [href]="getLink(subject?.syllabus ?? '#')" *ngIf="subject?.syllabus !== null" target="_blank">
-            <div class="tooltip underline" data-tip="View Syllabus">
+            <a [href]="getLink(subject?.syllabus ?? '#')" *ngIf="subject?.syllabus !== null" target="_blank">
+              <div class="tooltip underline" data-tip="View Syllabus">
+                {{ subject.title }}
+              </div>
+            </a>
+            <span *ngIf="subject?.syllabus === null">
               {{ subject.title }}
-            </div>
-          </a>
-          <span *ngIf="subject?.syllabus === null">
-            {{ subject.title }}
-          </span>
+            </span>
           </td>
           <td class="text-base">{{ subject.description }}</td>
           <td class="text-base">{{ subject.units }}</td>
@@ -77,7 +77,7 @@
             <label class="label">
               <span class="label-text">Year Level</span>
             </label>
-            <input type="number" min="1" max="10" value="0" formControlName="year_level" placeholder="Year Level"
+            <input type="number" min="1" max="12" value="0" formControlName="year_level" placeholder="Year Level"
               class="input input-bordered input-neutral w-full max-w-xs" />
           </div>
 
@@ -125,7 +125,7 @@
             <label class="label">
               <span class="label-text">Hours</span>
             </label>
-            <input type="number" min="0" max="12" value="0" formControlName="hours" placeholder="Hours"
+            <input type="number" min="0" max="999" value="0" formControlName="hours" placeholder="Hours"
               class="input input-bordered input-neutral w-full max-w-xs" />
           </div>
         </div>

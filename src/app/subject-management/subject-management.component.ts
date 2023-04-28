@@ -7,7 +7,7 @@ import {
   UntypedFormBuilder,
   Validators,
 } from '@angular/forms';
-import { Subject, map, of, shareReplay, switchMap, tap } from 'rxjs';
+import { map, of, shareReplay, switchMap, tap } from 'rxjs';
 import { baseUrl } from '../shared/utils/api';
 
 @Component({
@@ -103,10 +103,13 @@ export class SubjectManagementComponent implements OnInit {
       title: ['', [Validators.required]],
       description: [''],
       units: ['', [Validators.required, Validators.min(0), Validators.max(5)]],
-      hours: ['', [Validators.required, Validators.min(0), Validators.max(12)]],
+      hours: [
+        '',
+        [Validators.required, Validators.min(0), Validators.max(999)],
+      ],
       year_level: [
         '',
-        [Validators.required, Validators.min(1), Validators.max(10)],
+        [Validators.required, Validators.min(1), Validators.max(12)],
       ],
       term: ['', [Validators.required, Validators.min(1), Validators.max(4)]],
       syllabus: [''],

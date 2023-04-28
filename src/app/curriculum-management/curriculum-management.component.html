@@ -30,7 +30,7 @@
           <p class="text-base line-clamp-5">Description: {{ curriculum.description }}</p>
         </div>
         <div class="flex justify-center mt-auto gap-2">
-          <button class="btn btn-warning rounded-2xl text-warning-content"
+          <button *ngIf="curriculum.status !== 'review'" class="btn btn-warning rounded-2xl text-warning-content"
             (click)="onEditCurriculum(curriculum?.id ?? -1)">
             Edit
           </button>
@@ -38,7 +38,8 @@
             (click)="onViewCurriculum(curriculum?.id ?? -1)">
             View
           </button>
-          <div class="tooltip" data-tip="Note: Please adjust the settings such as scaling of the page before printing. It can be found on the right side of the printing property window.">
+          <div class="tooltip"
+            data-tip="Note: Adjust the printing properties such as orientation and scaling before printing. Example: Set the scaling to custom and adjust it to the recommended scale of 50%">
             <a class="btn btn-info rounded-2xl text-info-content" [routerLink]="getLink(curriculum?.id ?? -1)"
               target="_blank">
               Print

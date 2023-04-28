@@ -44,11 +44,6 @@ export class DashboardComponent implements OnInit {
         profile?.first_name !== undefined ? profile.first_name[0] : 'U';
     });
 
-    this.curriculumService.init();
-    this.subjectService.init();
-    this.departmentService.init();
-    this.userService.init();
-
     this.curriculum$.subscribe(curriculums => {
       this.totalCurriculum = curriculums.length;
       this.drafts = curriculums.filter(
@@ -57,7 +52,7 @@ export class DashboardComponent implements OnInit {
       this.approved = curriculums.filter(
         curriculum => curriculum.status === 'approved'
       ).length;
-      this.rejected = curriculums.filter(
+      this.review = curriculums.filter(
         curriculum => curriculum.status === 'review'
       ).length;
       this.rejected = curriculums.filter(
@@ -82,6 +77,11 @@ export class DashboardComponent implements OnInit {
       this.totalInvitedUsers = users.length;
       this.updateTotalUsers();
     });
+
+    this.curriculumService.init();
+    this.subjectService.init();
+    this.departmentService.init();
+    this.userService.init();
   }
 
   updateTotalUsers() {

@@ -7,7 +7,8 @@ import {
   Validators,
 } from '@angular/forms';
 import { UserService } from './data-access/users.service';
-import { catchError, map, of, tap } from 'rxjs';
+import { tap } from 'rxjs';
+import { AuthService } from '../shared/auth/auth.service';
 
 @Component({
   selector: 'app-user-management',
@@ -18,6 +19,8 @@ import { catchError, map, of, tap } from 'rxjs';
 export class UserManagementComponent implements OnInit {
   activeUsers$ = this.userService.getActive();
   invitedUsers$ = this.userService.getInvited();
+
+  currentUserId: number = -1;
 
   inviteUserForm: any = {
     email: '',
@@ -53,6 +56,7 @@ export class UserManagementComponent implements OnInit {
 
   constructor(
     private userService: UserService,
+    private authService: AuthService,
     private formBuilder: UntypedFormBuilder
   ) {}
 
@@ -70,6 +74,10 @@ export class UserManagementComponent implements OnInit {
       last_name: ['', Validators.required],
       role_name: ['', Validators.required],
       role_type: ['', Validators.required],
+    });
+
+    this.authService.getProfile().subscribe(profile => {
+      this.currentUserId = profile?.id ?? -1;
     });
 
     this.userService.init();

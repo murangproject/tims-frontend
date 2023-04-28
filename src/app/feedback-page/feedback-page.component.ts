@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { FeedbackCommentComponent } from '../feedback-comment/feedback-comment.component';
 import {
   FormsModule,
@@ -113,6 +113,7 @@ export class FeedbackPageComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private formBuilder: UntypedFormBuilder,
     private departmentService: DepartmentService,
     private subjectService: SubjectService,
@@ -226,10 +227,12 @@ export class FeedbackPageComponent implements OnInit {
         next: () => {
           this.toastService.showToast('Curriculum approved!', true);
           this.curriculumService.init();
+          this.router.navigate(['approved-curriculums']);
         },
         error: () => {
           this.toastService.showToast('Failed to approve curriculum!', false);
           this.curriculumService.init();
+          this.router.navigate(['approved-curriculums']);
         },
       });
     this.closeApproveModal();
@@ -242,10 +245,12 @@ export class FeedbackPageComponent implements OnInit {
         next: () => {
           this.toastService.showToast('Curriculum rejected!', true);
           this.curriculumService.init();
+          this.router.navigate(['reject-curriculums']);
         },
         error: () => {
           this.toastService.showToast('Failed to reject curriculum!', false);
           this.curriculumService.init();
+          this.router.navigate(['reject-curriculums']);
         },
       });
     this.closeRejectModal();

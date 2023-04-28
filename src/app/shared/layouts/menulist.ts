@@ -85,6 +85,26 @@ export const BottomSideNavItems = {
       link: '/admin/settings',
     },
   ],
+  committee_chair: [
+    {
+      label: 'Submitted For Review',
+      link: '/admin/submitted-curriculums',
+    },
+    {
+      label: 'Settings',
+      link: '/admin/settings',
+    },
+  ],
+  committee_member: [
+    {
+      label: 'Submitted For Review',
+      link: '/admin/submitted-curriculums',
+    },
+    {
+      label: 'Settings',
+      link: '/admin/settings',
+    },
+  ],
   stakeholder: [
     {
       label: 'Settings',

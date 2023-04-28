@@ -103,7 +103,7 @@ export class CurriculumManagementComponent implements OnInit {
   }
 
   onViewCurriculum(id: number) {
-    this.router.navigate([`admin/view-curriculums/${id}`]);
+    this.router.navigate([`admin/curriculums/${id}`]);
   }
 
   getBadgeStatusColor(status?: CurriculumStatus) {
