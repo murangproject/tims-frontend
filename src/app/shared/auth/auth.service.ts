@@ -27,7 +27,7 @@ export class AuthService {
   login(email: string, password: string) {
     const loginPayload = { email, password };
 
-    this.http.get(`${baseUrl}/sanctum/csrf-cookie`).subscribe();}
+    this.http.get(`${baseUrl}/sanctum/csrf-cookie`).subscribe();
 
     return this.http
       .post<{ user: User; token: string; initialize: boolean }>(
@@ -82,7 +82,7 @@ export class AuthService {
       password: password,
       password_confirmation: confirmPassword,
     };
-
+auth
     const headers = {
       Authorization: `Bearer ${localStorage.getItem('authToken')}`,
     };
