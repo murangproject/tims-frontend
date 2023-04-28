@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { catchError, map, share, shareReplay, tap } from 'rxjs/operators';
 import {
+  baseUrl,
   checkRoleEndpoint,
   initAccountEndpoint,
   loginEndpoint,
@@ -25,6 +26,8 @@ export class AuthService {
 
   login(email: string, password: string) {
     const loginPayload = { email, password };
+
+    this.http.get(`${baseUrl}/sanctum/csrf-cookie`).subscribe();}
 
     return this.http
       .post<{ user: User; token: string; initialize: boolean }>(

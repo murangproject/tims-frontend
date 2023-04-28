@@ -43,4 +43,5 @@ export {
   curriculumEndpoint,
   profileEndpoint,
   commentEndpoint,
+  baseUrl,
 };
