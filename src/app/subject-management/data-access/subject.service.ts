@@ -75,4 +75,18 @@ export class SubjectService {
       headers,
     });
   }
+
+  uploadSyllabus(code: string, formData: FormData) {
+    const headers = {
+      Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+    };
+
+    return this.http.post<{ message: string }>(
+      `${subjectEndpoint}/${code}/syllabus`,
+      formData,
+      {
+        headers,
+      }
+    );
+  }
 }

@@ -20,6 +20,7 @@ import {
 import { AuthService } from '../shared/auth/auth.service';
 import { CommentService } from '../curriculum-management/data-access/ comment.service';
 import { ToastService } from '../shared/services/toast.service';
+import { baseUrl } from '../shared/utils/api';
 
 @Component({
   selector: 'app-feedback-page',
@@ -248,5 +249,9 @@ export class FeedbackPageComponent implements OnInit {
         },
       });
     this.closeRejectModal();
+  }
+
+  getLink(name: string) {
+    return baseUrl + '/uploads/' + name;
   }
 }

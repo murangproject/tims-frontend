@@ -34,7 +34,14 @@
                   <td class="border-2 border-base-300">{{ subject.term }}</td>
                   <td class="border-2 border-base-300">{{ subject.code }}</td>
                   <td class="min-w-[250px] border-2 border-base-300">
-                    {{ subject.title }}
+                    <a [href]="getLink(subject?.syllabus ?? '#')" *ngIf="subject?.syllabus !== null" target="_blank">
+                      <div class="tooltip underline" data-tip="View Syllabus">
+                        {{ subject.title }}
+                      </div>
+                    </a>
+                    <span *ngIf="subject?.syllabus === null">
+                      {{ subject.title }}
+                    </span>
                   </td>
                   <td class="border-2 border-base-300">{{ subject.units }}</td>
                   <td class="border-2 border-base-300">{{ subject.hours }}</td>

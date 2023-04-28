@@ -1,18 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { DepartmentService } from '../department-management/data-access/department.service';
 import { SubjectService } from '../subject-management/data-access/subject.service';
 import { CurriculumService } from '../curriculum-management/data-access/curriculum.service';
-import { AuthService } from '../shared/auth/auth.service';
 import { map, Observable, switchMap } from 'rxjs';
 import { Subject } from '../subject-management/data-access/subject.model';
 import { Curriculum } from '../curriculum-management/data-access/curriculum.model';
+import { baseUrl } from '../shared/utils/api';
 
 @Component({
   selector: 'app-view-curriculum',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './view-curriculum.component.html',
   styleUrls: ['./view-curriculum.component.scss'],
 })
@@ -107,5 +107,9 @@ export class ViewCurriculumComponent implements OnInit {
     this.departmentService.init();
     this.subjectService.init();
     this.curriculumService.init();
+  }
+
+  getLink(name: string) {
+    return baseUrl + '/uploads/' + name;
   }
 }

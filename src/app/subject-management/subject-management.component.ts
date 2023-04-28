@@ -8,6 +8,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { Subject, map, of, shareReplay, switchMap, tap } from 'rxjs';
+import { baseUrl } from '../shared/utils/api';
 
 @Component({
   selector: 'app-subject-management',
@@ -76,9 +77,14 @@ export class SubjectManagementComponent implements OnInit {
     corequisite_code: '',
   };
 
+  syllabusForm: any = {
+    syllabus: '',
+  };
+
   createSubjectModalState: boolean = false;
   updateSubjectModalState: boolean = false;
   deleteSubjectModalState: boolean = false;
+  uploadSyllabusModalState: boolean = false;
   selectedCode: string = '';
 
   // Toast
@@ -106,6 +112,10 @@ export class SubjectManagementComponent implements OnInit {
       syllabus: [''],
       prerequisite_code: [''],
       corequisite_code: [''],
+    });
+
+    this.syllabusForm = this.formBuilder.group({
+      syllabus: ['', [Validators.required]],
     });
 
     this.subjectService.init();
@@ -199,6 +209,42 @@ export class SubjectManagementComponent implements OnInit {
       });
   }
 
+  openUploadSyllabusModal() {
+    this.uploadSyllabusModalState = true;
+  }
+
+  closeUploadSyllabusModal() {
+    this.uploadSyllabusModalState = false;
+  }
+
+  onSubmitUploadSyllabus() {
+    const formData = new FormData();
+    formData.append('file', this.syllabusForm.get('syllabus').value);
+    this.subjectService.uploadSyllabus(this.selectedCode, formData).subscribe({
+      next: res => {
+        this.toastUtil('Upload syllabus is successful', true);
+        this.closeUploadSyllabusModal();
+        this.syllabusForm.reset();
+        this.subjectService.init();
+      },
+      error: err => {
+        this.toastUtil('Upload syllabus failed', false);
+        this.closeUploadSyllabusModal();
+        this.syllabusForm.reset();
+        this.subjectService.init();
+      },
+    });
+  }
+
+  onFileSelected(event: any) {
+    const file: File = event.target.files[0];
+    if (file) {
+      this.syllabusForm.patchValue({
+        syllabus: file,
+      });
+    }
+  }
+
   toastUtil(message: string, success: boolean) {
     this.toastModalState = true;
     this.toastColor = success;
@@ -207,5 +253,9 @@ export class SubjectManagementComponent implements OnInit {
       this.toastModalState = false;
       this.toastMessage = '';
     });
+  }
+
+  getLink(name: string) {
+    return baseUrl + '/uploads/' + name;
   }
 }
