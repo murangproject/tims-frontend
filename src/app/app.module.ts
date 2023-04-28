@@ -3,13 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import {
-  HttpClientModule,
-  HttpClientXsrfModule,
-  HttpXsrfTokenExtractor,
-  HTTP_INTERCEPTORS,
-} from '@angular/common/http';
-import { HttpxsrfInterceptor } from './httpxsrf.interceptor';
+import { HttpClientModule, HttpClientXsrfModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [AppComponent],
@@ -19,13 +13,7 @@ import { HttpxsrfInterceptor } from './httpxsrf.interceptor';
     HttpClientModule,
     HttpClientXsrfModule,
   ],
-  providers: [
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: HttpxsrfInterceptor,
-      multi: true,
-    },
-  ],
+  providers: [],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
