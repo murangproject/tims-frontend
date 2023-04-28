@@ -42,7 +42,10 @@ export class AuthService {
           );
           localStorage.setItem('authToken', response.token);
           localStorage.setItem('role', response.user.role_type ?? '');
-          localStorage.setItem('fullName', `${response.user.first_name} ${response.user.last_name}`)
+          localStorage.setItem(
+            'fullName',
+            `${response.user.first_name} ${response.user.last_name}`
+          );
           this.isAuthenticated.next(true);
         }),
         shareReplay({ bufferSize: 1, refCount: true })
@@ -82,7 +85,7 @@ export class AuthService {
       password: password,
       password_confirmation: confirmPassword,
     };
-auth
+
     const headers = {
       Authorization: `Bearer ${localStorage.getItem('authToken')}`,
     };
