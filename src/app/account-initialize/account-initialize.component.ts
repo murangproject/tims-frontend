@@ -41,6 +41,12 @@ export class AccountInitializeComponent implements OnInit {
       password: ['', Validators.required],
       confirmPassword: ['', Validators.required],
     });
+
+    this.auth.getProfile().subscribe(profile => {
+      this.form.patchValue({
+        email: profile?.email ?? '',
+      });
+    });
   }
 
   onSubmit() {
