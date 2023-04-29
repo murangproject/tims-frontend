@@ -75,7 +75,7 @@
       <div class="flex mb-auto text-center justify-center items-start">
         <h1 class="text-lg font-bold">Activities</h1>
       </div>
-      <div class="flex flex-col w-full h-full overflow-auto">
+      <div class="flex flex-col w-full h-full overflow-auto gap-2">
         <div class="flex flex-row gap-2" *ngFor="let activity of activityLogs$ | async">
           <p class="text-xs">[{{activity.created_at}}]</p>
           <p class="text-xs">{{activity.description}}</p>
@@ -87,7 +87,7 @@
       <div class="flex mb-auto text-center justify-center items-start">
         <h1 class="text-lg font-bold">Curriculum Logs</h1>
       </div>
-      <div class="flex flex-col w-full h-full overflow-auto">
+      <div class="flex flex-col w-full h-full overflow-auto gap-2">
         <div class="flex flex-row gap-2" *ngFor="let activity of curriculumLogs$ | async">
           <p class="text-xs">[{{activity.created_at}}]</p>
           <p class="text-xs">{{activity.description}}</p>
