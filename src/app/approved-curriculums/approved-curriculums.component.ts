@@ -70,4 +70,8 @@ export class ApprovedCurriculumsComponent implements OnInit {
   onViewCurriculum(id: number) {
     this.router.navigate([`view-curriculums/${id}`]);
   }
+
+  getLink(id: number) {
+    return `/print-curriculum/${id}`;
+  }
 }
