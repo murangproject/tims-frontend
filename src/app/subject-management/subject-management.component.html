@@ -11,7 +11,6 @@
           <th>Term</th>
           <th>Code</th>
           <th>Title</th>
-          <th>Description</th>
           <th>Units</th>
           <th>Hours</th>
           <th>Prerequisite</th>
@@ -35,7 +34,6 @@
               {{ subject.title }}
             </span>
           </td>
-          <td class="text-xs prose">{{ subject.description }}</td>
           <td class="text-base">{{ subject.units }}</td>
           <td class="text-base">{{ subject.hours }}</td>
           <td class="text-base">{{ subject.prerequisite?.code ?? '' }}</td>
@@ -55,6 +53,11 @@
                 selectSubject(subject?.code ?? ''); openUploadSyllabusModal()
               ">
               upload
+            </button>
+            <button class="btn btn-info bg-info text-info-content" (click)="
+                selectSubject(subject?.code ?? ''); openDescriptionModal()
+              ">
+              Description
             </button>
           </td>
         </tr>
@@ -255,7 +258,6 @@
 </div>
 
 <!-- UPLOAD MODAL -->
-<input type="checkbox" id="delete-modal" class="modal-toggle" />
 <div class="modal cursor-pointer" [ngClass]="{ 'modal-open': uploadSyllabusModalState }">
   <div class="modal-box" for="">
     <h3 class="font-bold text-lg">Upload Syllabus</h3>
@@ -266,6 +268,17 @@
     <div class="modal-action">
       <label class="btn" (click)="onSubmitUploadSyllabus()">CONFIRM</label>
       <label class="btn btn-outline" (click)="closeUploadSyllabusModal()">CANCEL</label>
+    </div>
+  </div>
+</div>
+
+<!-- Description MODAL -->
+<div class="modal cursor-pointer" [ngClass]="{ 'modal-open': descriptionModalState }">
+  <div class="modal-box" for="" *ngIf="selectSubject$ | async as subject">
+    <h3 class="font-bold text-lg">Subject Description</h3>
+    <p class="mt-2">{{subject.description}}</p>
+    <div class="modal-action">
+      <label class="btn" (click)="closeDescriptionModal()">OK</label>
     </div>
   </div>
 </div>

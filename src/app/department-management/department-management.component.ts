@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { tap } from 'rxjs';
+import { map, tap } from 'rxjs';
 import { DepartmentService } from './data-access/department.service';
 import {
   FormsModule,
@@ -20,12 +20,19 @@ export class DepartmentManagementComponent implements OnInit {
   departments$ = this.departmentService.getDepartments();
   archives$ = this.departmentService.getArchives();
 
+  selectDepartment$ = this.departments$.pipe(
+    map(departments =>
+      departments.find(department => department.id === this.selectedId)
+    )
+  );
+
   tab: 'active' | 'archive' = 'active';
 
   // Modal
   createDepartmentModalState: boolean = false;
   updateDepartmentModalState: boolean = false;
   deleteDepartmentModalState: boolean = false;
+  descriptionModalState: boolean = false;
 
   selectedId: number = -1;
 
@@ -145,6 +152,7 @@ export class DepartmentManagementComponent implements OnInit {
 
   select(id: number) {
     this.selectedId = id;
+    this.departmentService.init();
   }
 
   restore() {
@@ -158,5 +166,13 @@ export class DepartmentManagementComponent implements OnInit {
         this.departmentService.init();
       },
     });
+  }
+
+  openDescriptionModal() {
+    this.descriptionModalState = true;
+  }
+
+  closeDescriptionModal() {
+    this.descriptionModalState = false;
   }
 }

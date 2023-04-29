@@ -27,6 +27,10 @@ export class SubjectManagementComponent implements OnInit {
     )
   );
 
+  selectSubject$ = this.subjects$.pipe(
+    map(subjects => subjects.find(s => s.code === this.selectedCode))
+  );
+
   prerequisites$ = this.subjects$.pipe(
     switchMap(subjects => of(subjects.find(s => s.code === this.selectedCode))),
     switchMap(subject =>
@@ -85,6 +89,7 @@ export class SubjectManagementComponent implements OnInit {
   updateSubjectModalState: boolean = false;
   deleteSubjectModalState: boolean = false;
   uploadSyllabusModalState: boolean = false;
+  descriptionModalState: boolean = false;
   selectedCode: string = '';
 
   // Toast
@@ -260,5 +265,13 @@ export class SubjectManagementComponent implements OnInit {
 
   getLink(name: string) {
     return baseUrl + '/uploads/' + name;
+  }
+
+  openDescriptionModal() {
+    this.descriptionModalState = true;
+  }
+
+  closeDescriptionModal() {
+    this.descriptionModalState = false;
   }
 }

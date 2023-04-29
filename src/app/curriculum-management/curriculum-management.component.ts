@@ -28,15 +28,20 @@ import { Curriculum, CurriculumStatus } from './data-access/curriculum.model';
 })
 export class CurriculumManagementComponent implements OnInit {
   departments$ = this.departmentService.getDepartments();
-  curriculums$ = this.curriculumService
-    .getCurriculums()
-    .pipe(
-      map((curriculums: Curriculum[]) =>
-        curriculums.filter(cur =>
-          cur ? cur.department?.name.includes(this.filter) : false
-        )
+  curriculums$ = this.curriculumService.getCurriculums().pipe(
+    map((curriculums: Curriculum[]) =>
+      curriculums.filter(cur =>
+        cur ? cur.department?.name.includes(this.filter) : false
       )
-    );
+    ),
+    map((curriculums: Curriculum[]) =>
+      curriculums.sort((a, b) =>
+        a?.status !== undefined && b?.status !== undefined
+          ? a.status.localeCompare(b.status)
+          : 0
+      )
+    )
+  );
 
   form: any = {
     department_id: '',
@@ -54,7 +59,7 @@ export class CurriculumManagementComponent implements OnInit {
     private router: Router,
     private formBuilder: UntypedFormBuilder,
     private toastService: ToastService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.form = this.formBuilder.group({
