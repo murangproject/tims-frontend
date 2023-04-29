@@ -5,16 +5,50 @@ import { CurriculumService } from '../curriculum-management/data-access/curricul
 import { SubjectService } from '../subject-management/data-access/subject.service';
 import { DepartmentService } from '../department-management/data-access/department.service';
 import { UserService } from '../user-management/data-access/users.service';
+import { ActivityService } from './activity.service';
+import { map, tap } from 'rxjs';
+import { Activity } from './activity.model';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
   imports: [CommonModule],
   templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.scss'],
 })
 export class DashboardComponent implements OnInit {
+  activities$ = this.activityService.getActivities().pipe(
+    map(activities =>
+      activities.map(activity => {
+        const date = new Date(activity?.created_at ?? '');
+        return {
+          ...activity,
+          created_at: `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`,
+        } as Activity;
+      })
+    ),
+    map(activities =>
+      activities.sort(
+        (a, b) =>
+          new Date(b.created_at ?? '').getTime() -
+          new Date(a.created_at ?? '').getTime()
+      )
+    )
+  );
+
+  activityLogs$ = this.activities$.pipe(
+    map(activities =>
+      activities.filter(activity => activity.type !== 'curriculum')
+    )
+  );
+
+  curriculumLogs$ = this.activities$.pipe(
+    map(activities =>
+      activities.filter(activity => activity.type === 'curriculum')
+    )
+  );
+
   curriculum$ = this.curriculumService.getCurriculums();
+
   firstLetter: string = '';
 
   totalActiveUsers: number = 0;
@@ -35,7 +69,8 @@ export class DashboardComponent implements OnInit {
     private curriculumService: CurriculumService,
     private subjectService: SubjectService,
     private departmentService: DepartmentService,
-    private userService: UserService
+    private userService: UserService,
+    private activityService: ActivityService
   ) {}
 
   ngOnInit(): void {
@@ -82,6 +117,7 @@ export class DashboardComponent implements OnInit {
     this.subjectService.init();
     this.departmentService.init();
     this.userService.init();
+    this.activityService.init();
   }
 
   updateTotalUsers() {

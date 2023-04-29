@@ -245,12 +245,12 @@ export class FeedbackPageComponent implements OnInit {
         next: () => {
           this.toastService.showToast('Curriculum rejected!', true);
           this.curriculumService.init();
-          this.router.navigate(['reject-curriculums']);
+          this.router.navigate(['rejected-curriculums']);
         },
         error: () => {
           this.toastService.showToast('Failed to reject curriculum!', false);
           this.curriculumService.init();
-          this.router.navigate(['reject-curriculums']);
+          this.router.navigate(['rejected-curriculums']);
         },
       });
     this.closeRejectModal();

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, map, shareReplay, tap } from 'rxjs';
-import { userEndpoint } from '../../shared/utils/api';
+import { updateProfileEndpoint, userEndpoint } from '../../shared/utils/api';
 import {
   User,
   CreateUserDto,
@@ -100,6 +100,22 @@ export class UserService {
 
     return this.http.put<{ message: string }>(
       `${this.endpoint}/${id}`,
+      updateUserDto,
+      {
+        headers,
+      }
+    );
+  }
+
+  updateProfile(id: number, updateUserDto: UpdateActiveUserDto) {
+    const headers = {
+      Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+    };
+
+    console.log(updateUserDto);
+
+    return this.http.put<{ message: string }>(
+      `${updateProfileEndpoint}/${id}`,
       updateUserDto,
       {
         headers,

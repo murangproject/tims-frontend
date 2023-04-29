@@ -8,8 +8,12 @@ const initAccountEndpoint = `${baseUrl}/api/init`;
 const tokenValidationEndpoint = `${baseUrl}/api/validate-token`;
 const checkRoleEndpoint = `${baseUrl}/api/check-role`;
 
+// Activity Endpoint
+const activityEndpoint = `${baseUrl}/api/activities`;
+
 // User CRUD
 const userEndpoint = `${baseUrl}/api/users`;
+const updateProfileEndpoint = `${baseUrl}/api/profile`;
 const profileEndpoint = `${baseUrl}/api/user`;
 
 // Department CRUD
@@ -45,4 +49,6 @@ export {
   profileEndpoint,
   commentEndpoint,
   baseUrl,
+  updateProfileEndpoint,
+  activityEndpoint,
 };

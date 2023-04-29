@@ -191,6 +191,14 @@ const routes: Routes = [
         component: SidebarComponent,
         children: [
           {
+            path: 'profile',
+            title: 'Profile',
+            loadComponent: () =>
+              import('./profile/profile.component').then(
+                c => c.ProfileComponent
+              ),
+          },
+          {
             path: 'approved-curriculums',
             title: 'Approved Curriculums',
             data: { roles: ['stakeholder'] },
@@ -255,4 +263,4 @@ const routes: Routes = [
   imports: [RouterModule.forRoot(routes, routerConfig)],
   exports: [RouterModule],
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}
