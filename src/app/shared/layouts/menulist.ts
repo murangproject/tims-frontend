@@ -32,10 +32,6 @@ export const TopSideNavItems = {
       link: '/admin/dashboard',
     },
     {
-      label: 'User Management',
-      link: '/admin/user-management',
-    },
-    {
       label: 'Curriculum Management',
       link: '/admin/curriculum-management',
     },

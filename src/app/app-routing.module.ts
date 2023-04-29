@@ -59,7 +59,7 @@ const routes: Routes = [
           {
             path: 'user-management',
             title: 'User Management',
-            data: { roles: ['admin', 'committee_chair'] },
+            data: { roles: ['admin'] },
             canMatch: [roleGuard],
             loadComponent: () =>
               import('./user-management/user-management.component').then(
