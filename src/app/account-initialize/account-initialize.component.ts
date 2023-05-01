@@ -8,6 +8,7 @@ import {
 } from '@angular/forms';
 import { AuthService } from '../shared/auth/auth.service';
 import { Router } from '@angular/router';
+import { ToastService } from '../shared/services/toast.service';
 
 @Component({
   selector: 'app-account-initialize',
@@ -31,6 +32,7 @@ export class AccountInitializeComponent implements OnInit {
   formBuilder = inject(UntypedFormBuilder);
   auth = inject(AuthService);
   router = inject(Router);
+  toastService = inject(ToastService);
 
   ngOnInit(): void {
     this.form = this.formBuilder.group({
@@ -75,9 +77,11 @@ export class AccountInitializeComponent implements OnInit {
       )
       .subscribe(
         () => {
+          this.toastService.showToast('Account initialized successfully', true);
           this.router.navigate(['/logout']);
         },
         error => {
+          this.toastService.showToast(error.error.message, false);
           this.invalid = true;
         }
       );

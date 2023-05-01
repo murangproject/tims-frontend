@@ -1,32 +1,67 @@
-<div class="flex w-full h-full p-20">
-  <form
-    [formGroup]="form"
-    class="flex h-full w-full items-center justify-center">
-    <div
-      class="flex flex-col shadow border rounded-lg p-20 items-center justify-center gap-8 bg-base-100">
-      <h1 class="text-4xl font-bold mb-6">Profile</h1>
-      <input
-        type="text"
-        formControlName="first_name"
-        placeholder="First name"
-        class="input input-bordered input-neutral w-full max-w-xs" />
-      <input
-        type="text"
-        formControlName="middle_name"
-        placeholder="Middle name"
-        class="input input-bordered input-neutral w-full max-w-xs" />
-      <input
-        type="text"
-        formControlName="last_name"
-        placeholder="Last name"
-        class="input input-bordered input-neutral w-full max-w-xs" />
-      <input
-        type="text"
-        formControlName="email"
-        placeholder="Email"
-        class="input input-bordered input-neutral w-full max-w-xs" />
+<div class="flex h-full gap-2 p-5">
+  <form [formGroup]="form">
+    <div class="flex flex-col shadow border rounded-lg p-20 items-center justify-center gap-8 bg-base-100">
+      <h1 class="text-lg font-bold">Profile</h1>
+      <div class="form-control w-full max-w-xs">
+        <label class="label">
+          <span class="label-text">First Name</span>
+        </label>
+        <input type="text" formControlName="first_name" placeholder="First name"
+          class="input input-bordered input-neutral w-full max-w-xs" />
+      </div>
+      <div class="form-control w-full max-w-xs">
+        <label class="label">
+          <span class="label-text">Middle Name</span>
+        </label>
+        <input type="text" formControlName="middle_name" placeholder="Middle name"
+          class="input input-bordered input-neutral w-full max-w-xs" />
+      </div>
+      <div class="form-control w-full max-w-xs">
+        <label class="label">
+          <span class="label-text">Last Name</span>
+        </label>
+        <input type="text" formControlName="last_name" placeholder="Last name"
+          class="input input-bordered input-neutral w-full max-w-xs" />
+      </div>
+      <div class="form-control w-full max-w-xs">
+        <label class="label">
+          <span class="label-text">Email</span>
+        </label>
+        <input type="text" formControlName="email" placeholder="Email"
+          class="input input-bordered input-neutral w-full max-w-xs" />
+      </div>
       <button class="btn w-full max-w-xs" type="submit" (click)="onSubmit()">
         Update Profile
+      </button>
+    </div>
+  </form>
+
+  <form [formGroup]="changePasswordForm">
+    <div class="flex flex-col shadow border rounded-lg p-20 items-center justify-center gap-8 bg-base-100">
+      <h1 class="text-lg font-bold">Change Password</h1>
+      <div class="form-control w-full max-w-xs">
+        <label class="label">
+          <span class="label-text">Old Password</span>
+        </label>
+        <input type="password" formControlName="password" placeholder="Old Password"
+          class="input input-bordered input-neutral w-full max-w-xs" />
+      </div>
+      <div class="form-control w-full max-w-xs">
+        <label class="label">
+          <span class="label-text">New Password</span>
+        </label>
+        <input type="password" formControlName="new_password" placeholder="New Password"
+          class="input input-bordered input-neutral w-full max-w-xs" />
+      </div>
+      <div class="form-control w-full max-w-xs">
+        <label class="label">
+          <span class="label-text">Confirm Password</span>
+        </label>
+        <input type="password" formControlName="new_password_confirmation" placeholder="Confirm Password"
+          class="input input-bordered input-neutral w-full max-w-xs" />
+      </div>
+      <button class="btn w-full max-w-xs" type="submit" (click)="onChangePass()">
+        Change Password
       </button>
     </div>
   </form>

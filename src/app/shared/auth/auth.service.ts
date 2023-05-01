@@ -13,6 +13,17 @@ import {
 } from '../utils/api';
 import { User } from 'src/app/user-management/data-access/users.model';
 
+export interface changePasswordDto {
+  password: string;
+  new_password: string;
+  new_password_confirmation: string;
+}
+
+export interface changeResetPasswordDto {
+  password: string;
+  password_confirmation: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -147,5 +158,41 @@ export class AuthService {
 
   checkRole(role: string[]): boolean {
     return role.includes(localStorage.getItem('role') ?? '');
+  }
+
+  changePassword(payload: changePasswordDto) {
+    const headers = {
+      Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+    };
+
+    return this.http
+      .post<{ message: string }>(`${baseUrl}/api/change-password`, payload, {
+        headers,
+      })
+      .pipe(shareReplay({ bufferSize: 1, refCount: true }));
+  }
+
+  sendResetPassword(email: string) {
+    return this.http
+      .post<{ message: string }>(`${baseUrl}/api/reset-password`, {
+        email,
+      })
+      .pipe(shareReplay({ bufferSize: 1, refCount: true }));
+  }
+
+  changeResetPassword(token: string, payload: changeResetPasswordDto) {
+    const headers = {
+      Authorization: `Bearer ${token}`,
+    };
+
+    return this.http
+      .post<{ message: string }>(
+        `${baseUrl}/api/change-reset-password`,
+        payload,
+        {
+          headers,
+        }
+      )
+      .pipe(shareReplay({ bufferSize: 1, refCount: true }));
   }
 }

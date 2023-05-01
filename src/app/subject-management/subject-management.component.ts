@@ -223,6 +223,7 @@ export class SubjectManagementComponent implements OnInit {
 
   closeUploadSyllabusModal() {
     this.uploadSyllabusModalState = false;
+    this.syllabusForm.reset();
   }
 
   onSubmitUploadSyllabus() {

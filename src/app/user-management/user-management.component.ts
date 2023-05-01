@@ -9,6 +9,7 @@ import {
 import { UserService } from './data-access/users.service';
 import { tap } from 'rxjs';
 import { AuthService } from '../shared/auth/auth.service';
+import { ToastService } from '../shared/services/toast.service';
 
 @Component({
   selector: 'app-user-management',
@@ -57,8 +58,9 @@ export class UserManagementComponent implements OnInit {
   constructor(
     private userService: UserService,
     private authService: AuthService,
-    private formBuilder: UntypedFormBuilder
-  ) {}
+    private formBuilder: UntypedFormBuilder,
+    private toast: ToastService
+  ) { }
 
   ngOnInit(): void {
     this.inviteUserForm = this.formBuilder.group({
@@ -150,12 +152,12 @@ export class UserManagementComponent implements OnInit {
 
     this.userService.create(this.inviteUserForm.value).subscribe({
       next: () => {
-        this.toastUtil('User created successfully', true);
+        this.toast.showToast('User created successfully', true);
         this.userService.init();
         this.closeCreateInviteUserModal();
       },
       error: () => {
-        this.toastUtil('User creation failed', false);
+        this.toast.showToast('User creation failed', false);
         this.userService.init();
         this.closeCreateInviteUserModal();
       },
@@ -169,12 +171,12 @@ export class UserManagementComponent implements OnInit {
       .updateInvitedUser(this.selectedId, this.inviteUserForm.value)
       .subscribe({
         next: () => {
-          this.toastUtil('User updated successfully', true);
+          this.toast.showToast('User updated successfully', true);
           this.userService.init();
           this.closeUpdateInviteUserModal();
         },
         error: () => {
-          this.toastUtil('User update failed', false);
+          this.toast.showToast('User update failed', false);
           this.userService.init();
           this.closeUpdateInviteUserModal();
         },
@@ -188,12 +190,12 @@ export class UserManagementComponent implements OnInit {
       .updateInvitedUser(this.selectedId, this.activeUserForm.value)
       .subscribe({
         next: () => {
-          this.toastUtil('User updated successfully', true);
+          this.toast.showToast('User updated successfully', true);
           this.userService.init();
           this.closeUpdateActiveUserModal();
         },
         error: () => {
-          this.toastUtil('User update failed', false);
+          this.toast.showToast('User update failed', false);
           this.userService.init();
           this.closeUpdateActiveUserModal();
         },
@@ -203,12 +205,12 @@ export class UserManagementComponent implements OnInit {
   deleteUser() {
     this.userService.delete(this.selectedId).subscribe({
       next: () => {
-        this.toastUtil('User deleted successfully', true);
+        this.toast.showToast('User deleted successfully', true);
         this.userService.init();
         this.closeDeleteUserModal();
       },
       error: () => {
-        this.toastUtil('User deletion failed', false);
+        this.toast.showToast('User deletion failed', false);
         this.userService.init();
         this.closeDeleteUserModal();
       },
@@ -216,16 +218,6 @@ export class UserManagementComponent implements OnInit {
 
     this.inviteUserForm.reset();
     this.activeUserForm.reset();
-  }
-
-  toastUtil(message: string, success: boolean) {
-    this.toastModalState = true;
-    this.toastColor = success;
-    this.toastMessage = message;
-    new Promise(resolve => setTimeout(resolve, 4000)).then(() => {
-      this.toastModalState = false;
-      this.toastMessage = '';
-    });
   }
 
   getRoleName(role_type: string) {

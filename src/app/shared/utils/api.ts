@@ -1,5 +1,5 @@
-//const baseUrl = 'http://localhost:8000';
-const baseUrl = 'https://curriculum-backend.server.redenvalerio.com';
+const baseUrl = 'http://localhost:8000';
+//const baseUrl = 'https://curriculum-backend.server.redenvalerio.com';
 
 // Auth
 const loginEndpoint = `${baseUrl}/api/login`;

@@ -6,15 +6,16 @@ import {
   UntypedFormBuilder,
   Validators,
 } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../shared/auth/auth.service';
 import { tap } from 'rxjs';
+import { ToastService } from '../shared/services/toast.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
   templateUrl: './login.component.html',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule],
 })
 export class LoginComponent implements OnInit {
   invalid: boolean = false;
@@ -30,7 +31,8 @@ export class LoginComponent implements OnInit {
   constructor(
     private auth: AuthService,
     private formBuilder: UntypedFormBuilder,
-    private router: Router
+    private router: Router,
+    private toast: ToastService
   ) {}
 
   ngOnInit() {
@@ -83,12 +85,18 @@ export class LoginComponent implements OnInit {
         const initialization = this.auth.checkInitialization();
 
         if (initialization) {
+          this.toast.showToast(
+            'Account not initialized, redirecting to initialization page.',
+            true
+          );
           this.router.navigate(['/account-initialize']);
           return;
         }
+        this.toast.showToast('Login successful.', true);
         this.router.navigate(['/admin']);
       },
       error => {
+        this.toast.showToast('Login failed.', false);
         this.invalid = true;
       }
     );

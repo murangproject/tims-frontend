@@ -25,6 +25,12 @@ export class ProfileComponent implements OnInit {
     email: '',
   };
 
+  changePasswordForm: any = {
+    password: '',
+    new_password: '',
+    new_password_confirmation: '',
+  };
+
   submitted: boolean = false;
   invalid: boolean = false;
 
@@ -40,6 +46,12 @@ export class ProfileComponent implements OnInit {
       middle_name: '',
       last_name: ['', Validators.required],
       email: ['', Validators.required],
+    });
+
+    this.changePasswordForm = this.formBuilder.group({
+      password: ['', Validators.required],
+      new_password: ['', Validators.required],
+      new_password_confirmation: ['', Validators.required],
     });
 
     this.auth.getProfile().subscribe(profile => {
@@ -70,6 +82,21 @@ export class ProfileComponent implements OnInit {
           this.toast.showToast('Failed to update profile!', false);
         },
       });
+    });
+  }
+
+  onChangePass() {
+    console.log('change password');
+    if (this.changePasswordForm.invalid) return;
+
+    this.auth.changePassword(this.changePasswordForm.value).subscribe({
+      next: () => {
+        this.toast.showToast('Password updated successfully!', true);
+        this.router.navigate(['/logout']);
+      },
+      error: () => {
+        this.toast.showToast('Failed to update password!', false);
+      },
     });
   }
 }
